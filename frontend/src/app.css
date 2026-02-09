@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Inter';
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+}
+
+:root {
+  --green: #22c55e;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --red: #ef4444;
+  --bg-primary: #06060b;
+  --bg-secondary: #0d0d14;
+  --bg-card: #13131f;
+  --bg-card-hover: #1a1a2e;
+  --border: #1e1e32;
+  --text-primary: #e4e4e7;
+  --text-secondary: #71717a;
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Score color utilities */
+.score-low { color: var(--green); }
+.score-medium { color: var(--yellow); }
+.score-high { color: var(--orange); }
+.score-critical { color: var(--red); }
