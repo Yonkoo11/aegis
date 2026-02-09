@@ -1,7 +1,6 @@
 <script lang="ts">
   import { navigate } from '../lib/router';
   import { fetchAllReports, requestScan, checkStatus, scoreColor, type ReportSummary } from '../lib/api';
-  import ScoreGauge from '../lib/ScoreGauge.svelte';
   import ContractCard from '../lib/ContractCard.svelte';
   import { onMount } from 'svelte';
 
@@ -83,64 +82,69 @@
 
 <div class="max-w-6xl mx-auto px-4">
   <!-- Hero -->
-  <section class="pt-20 pb-16 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 mb-6">
-      <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></div>
-      <span class="text-xs text-[var(--accent-light)] font-medium">AI-Powered Security Oracle on BNB Chain</span>
-    </div>
+  <section class="pt-20 pb-16 text-center relative">
+    <!-- Gradient glow -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--accent)]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-      Is your contract <span class="text-[var(--accent-light)]">safe</span>?
-    </h1>
-    <p class="text-[var(--text-secondary)] text-lg max-w-xl mx-auto mb-8">
-      Paste any BSC contract address. Get an instant AI security audit.<br/>
-      Results stored onchain. Queryable by any dApp.
-    </p>
-
-    <!-- Search bar -->
-    <div class="max-w-2xl mx-auto">
-      <div class="flex gap-2">
-        <input
-          bind:value={address}
-          on:keydown={handleKeydown}
-          type="text"
-          placeholder="0x... paste any BSC contract address"
-          class="flex-1 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-mono text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/50 focus:outline-none focus:border-[var(--accent)]/50 focus:ring-1 focus:ring-[var(--accent)]/20 transition-all"
-          disabled={scanning}
-        />
-        <button
-          on:click={handleScan}
-          disabled={scanning}
-          class="px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {scanning ? 'Scanning...' : 'Scan'}
-        </button>
+    <div class="relative">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 mb-6 animate-fade-in">
+        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></div>
+        <span class="text-xs text-[var(--accent-light)] font-medium">AI-Powered Security Oracle on BNB Chain</span>
       </div>
 
-      {#if scanError}
-        <p class="text-red-400 text-sm mt-2 text-left">{scanError}</p>
-      {/if}
-      {#if scanning && scanMessage}
-        <div class="flex items-center gap-2 mt-3 text-sm text-[var(--accent-light)]">
-          <div class="w-3 h-3 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
-          {scanMessage}
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4 animate-fade-in-delay-1">
+        Is your contract <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent)] to-[var(--accent-light)]">safe</span>?
+      </h1>
+      <p class="text-[var(--text-secondary)] text-lg max-w-xl mx-auto mb-8 animate-fade-in-delay-2">
+        Paste any BSC contract address. Get an instant AI security audit.<br/>
+        Results stored onchain. Queryable by any dApp.
+      </p>
+
+      <!-- Search bar -->
+      <div class="max-w-2xl mx-auto animate-fade-in-delay-3">
+        <div class="flex gap-2 p-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl focus-within:border-[var(--accent)]/40 focus-within:shadow-[0_0_24px_rgba(99,102,241,0.1)] transition-all">
+          <input
+            bind:value={address}
+            on:keydown={handleKeydown}
+            type="text"
+            placeholder="0x... paste any BSC contract address"
+            class="flex-1 bg-transparent px-4 py-2.5 text-sm font-mono text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/40 focus:outline-none"
+            disabled={scanning}
+          />
+          <button
+            on:click={handleScan}
+            disabled={scanning}
+            class="px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_16px_rgba(99,102,241,0.3)] hover:shadow-[0_0_24px_rgba(99,102,241,0.5)]"
+          >
+            {scanning ? 'Scanning...' : 'Scan'}
+          </button>
         </div>
-      {/if}
+
+        {#if scanError}
+          <p class="text-red-400 text-sm mt-3 text-left">{scanError}</p>
+        {/if}
+        {#if scanning && scanMessage}
+          <div class="flex items-center justify-center gap-2 mt-4 text-sm text-[var(--accent-light)]">
+            <div class="w-3 h-3 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+            {scanMessage}
+          </div>
+        {/if}
+      </div>
     </div>
   </section>
 
   <!-- Stats bar -->
   {#if stats.total > 0}
-    <section class="grid grid-cols-3 gap-4 mb-12">
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center">
+    <section class="grid grid-cols-3 gap-4 mb-12 animate-fade-in-delay-3">
+      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
         <div class="text-2xl font-bold">{stats.total}</div>
         <div class="text-xs text-[var(--text-secondary)] mt-1">Contracts Scanned</div>
       </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center">
+      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
         <div class="text-2xl font-bold {scoreColor(stats.avgScore)}">{stats.avgScore}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Average Score</div>
+        <div class="text-xs text-[var(--text-secondary)] mt-1">Average Risk Score</div>
       </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center">
+      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
         <div class="text-2xl font-bold text-red-400">{stats.threats}</div>
         <div class="text-xs text-[var(--text-secondary)] mt-1">High Risk Detected</div>
       </div>
@@ -151,7 +155,7 @@
   {#if recentReports.length > 0}
     <section class="pb-20">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">Recent Scans</h2>
+        <h2 class="text-lg font-semibold m-0">Recent Scans</h2>
         <a href="#/explore" class="text-sm text-[var(--accent-light)] hover:underline no-underline">View all</a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

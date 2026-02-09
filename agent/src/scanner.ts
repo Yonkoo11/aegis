@@ -23,13 +23,14 @@ export interface SourceFile {
   content: string;
 }
 
-const BSCSCAN_API = "https://api.bscscan.com/api";
+const ETHERSCAN_V2_API = "https://api.etherscan.io/v2/api";
 
 export async function fetchContractSource(
   address: string,
-  apiKey: string
+  apiKey: string,
+  chainId: number = 56
 ): Promise<ContractSource> {
-  const url = `${BSCSCAN_API}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`;
+  const url = `${ETHERSCAN_V2_API}?chainid=${chainId}&module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`;
 
   const response = await fetch(url);
   const data = await response.json();

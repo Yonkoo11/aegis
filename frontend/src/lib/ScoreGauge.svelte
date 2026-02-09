@@ -12,28 +12,38 @@
 
 <div class="gauge" style="width: {size}px; height: {size}px;">
   <svg viewBox="0 0 100 100" class="gauge-svg">
+    <defs>
+      <filter id="glow-{score}">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
     <!-- Background circle -->
     <circle
       cx="50" cy="50" r="45"
       fill="none"
       stroke="#1e1e32"
-      stroke-width="8"
+      stroke-width="6"
     />
     <!-- Score arc -->
     <circle
       cx="50" cy="50" r="45"
       fill="none"
       stroke={color}
-      stroke-width="8"
+      stroke-width="6"
       stroke-linecap="round"
       stroke-dasharray={circumference}
       stroke-dashoffset={dashOffset}
       transform="rotate(-90 50 50)"
       class="gauge-arc"
+      filter="url(#glow-{score})"
     />
   </svg>
   <div class="gauge-center">
-    <span class="gauge-score" style="color: {color}">{score}</span>
+    <span class="gauge-score" style="color: {color}; text-shadow: 0 0 24px {color}44">{score}</span>
     <span class="gauge-label">{label}</span>
   </div>
 </div>

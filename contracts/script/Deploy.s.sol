@@ -7,13 +7,16 @@ import "../src/SecurityOracle.sol";
 contract DeploySecurityOracle is Script {
     function run() external {
         address agentAddress = vm.envAddress("AGENT_ADDRESS");
+        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
 
-        vm.startBroadcast();
+        vm.startBroadcast(deployerKey);
         SecurityOracle oracle = new SecurityOracle(agentAddress);
         vm.stopBroadcast();
 
-        console.log("SecurityOracle deployed at:", address(oracle));
-        console.log("Agent:", agentAddress);
-        console.log("Owner:", oracle.owner());
+        console.log("=== Aegis SecurityOracle Deployed ===");
+        console.log("Contract:", address(oracle));
+        console.log("Agent:   ", agentAddress);
+        console.log("Owner:   ", oracle.owner());
+        console.log("Chain ID:", block.chainid);
     }
 }
