@@ -1,6 +1,7 @@
 <script lang="ts">
   import { currentPath, matchRoute } from './lib/router';
   import Header from './lib/Header.svelte';
+  import Footer from './lib/Footer.svelte';
   import Home from './pages/Home.svelte';
   import Report from './pages/Report.svelte';
   import Explore from './pages/Explore.svelte';
@@ -36,3 +37,4 @@
     </div>
   {/if}
 </main>
+<Footer />

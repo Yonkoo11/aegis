@@ -18,7 +18,8 @@
   });
 
   $: {
-    let result = [...reports];
+    // Filter out unverified "Unknown" contracts
+    let result = reports.filter(r => r.contractName && r.contractName !== 'Unknown Contract' && r.contractName !== 'Unknown');
 
     if (search) {
       const q = search.toLowerCase();
@@ -76,11 +77,16 @@
       />
     </div>
 
-    <select bind:value={sortBy} class="sort-select">
-      <option value="newest">Newest</option>
-      <option value="score">Highest Risk</option>
-      <option value="name">Name A-Z</option>
-    </select>
+    <div class="sort-wrap">
+      <select bind:value={sortBy} class="sort-select">
+        <option value="newest">Newest</option>
+        <option value="score">Highest Risk</option>
+        <option value="name">Name A-Z</option>
+      </select>
+      <svg class="sort-chevron" width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
 
     <div class="risk-filters">
       {#each riskFilters as rf}
@@ -98,8 +104,14 @@
 
   <!-- Results -->
   {#if loading}
-    <div class="loading-state">
-      <div class="scan-line-loader"></div>
+    <div class="contracts-grid animate-fade-in">
+      {#each Array(6) as _}
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-name"></div>
+          <div class="skeleton-line skeleton-addr"></div>
+          <div class="skeleton-line skeleton-meta"></div>
+        </div>
+      {/each}
     </div>
   {:else if filtered.length === 0}
     <div class="empty-state animate-fade-in">
@@ -223,17 +235,32 @@
     border-color: var(--c-border-active);
   }
 
+  .sort-wrap {
+    position: relative;
+  }
+
   .sort-select {
+    appearance: none;
+    -webkit-appearance: none;
     background: var(--c-surface);
     border: 1px solid var(--c-border);
     border-radius: var(--radius-sm);
-    padding: 8px 36px 8px 12px;
+    padding: 8px 32px 8px 12px;
     font-family: var(--f-mono);
     font-size: 0.8125rem;
     color: var(--c-text);
     outline: none;
     cursor: pointer;
     transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .sort-chevron {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-muted);
+    pointer-events: none;
   }
 
   .sort-select:focus {
@@ -326,6 +353,45 @@
     font-family: var(--f-body);
     color: var(--c-muted);
     margin: 0;
+  }
+
+  /* Skeleton cards */
+  .skeleton-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .skeleton-line {
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--c-secondary) 25%, var(--c-border) 50%, var(--c-secondary) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease infinite;
+  }
+
+  .skeleton-name {
+    width: 60%;
+    height: 16px;
+  }
+
+  .skeleton-addr {
+    width: 45%;
+    height: 12px;
+  }
+
+  .skeleton-meta {
+    width: 80%;
+    height: 12px;
+    margin-top: 8px;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
   @media (max-width: 640px) {

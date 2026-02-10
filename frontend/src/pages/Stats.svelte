@@ -126,11 +126,17 @@
           Findings by Severity
           <span class="label-meta">{totalFindings} total</span>
         </div>
-        <div class="vuln-grid">
+        <div class="vuln-bars">
           {#each topVulnTypes as vuln}
-            <div class="vuln-card">
-              <div class="vuln-count" style="color: {vuln.color}; text-shadow: 0 0 16px {vuln.color}33;">{vuln.count}</div>
-              <div class="vuln-name">{vuln.name}</div>
+            <div class="vuln-bar-row">
+              <div class="vuln-bar-label">
+                <span class="vuln-bar-dot" style="background: {vuln.color}; box-shadow: 0 0 8px {vuln.color}44;"></span>
+                <span class="vuln-bar-name">{vuln.name}</span>
+              </div>
+              <div class="vuln-bar-track">
+                <div class="vuln-bar-fill" style="width: {totalFindings > 0 ? (vuln.count / totalFindings) * 100 : 0}%; background: {vuln.color}; box-shadow: 0 0 8px {vuln.color}44;"></div>
+              </div>
+              <span class="vuln-bar-count" style="color: {vuln.color};">{vuln.count}</span>
             </div>
           {/each}
         </div>
@@ -284,34 +290,62 @@
     transition: width 0.7s var(--ease-out);
   }
 
-  /* Vuln grid */
-  .vuln-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+  /* Vuln bars */
+  .vuln-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 
-  .vuln-card {
-    text-align: center;
-    padding: 16px;
-    background: var(--c-secondary);
-    border-radius: var(--radius-sm);
+  .vuln-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
-  .vuln-count {
-    font-family: var(--f-display);
-    font-size: 1.75rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+  .vuln-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 80px;
+    flex-shrink: 0;
   }
 
-  .vuln-name {
+  .vuln-bar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .vuln-bar-name {
     font-family: var(--f-mono);
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     color: var(--c-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 4px;
+  }
+
+  .vuln-bar-track {
+    flex: 1;
+    height: 24px;
+    background: var(--c-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .vuln-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.7s var(--ease-out);
+    min-width: 4px;
+  }
+
+  .vuln-bar-count {
+    font-family: var(--f-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    min-width: 32px;
+    text-align: right;
   }
 
   /* States */
@@ -348,10 +382,6 @@
 
   @media (max-width: 768px) {
     .overview-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .vuln-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }

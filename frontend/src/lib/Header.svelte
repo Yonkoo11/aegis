@@ -46,7 +46,7 @@
   <!-- Status indicator -->
   <div class="status-indicator">
     <span class="status-dot"></span>
-    BSC Mainnet
+    BSC Testnet
   </div>
 
   <!-- Hamburger trigger -->

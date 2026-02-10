@@ -167,30 +167,29 @@
         {/if}
       </div>
     </div>
+
+    <!-- Social proof stats - above fold -->
+    {#if stats.total > 0}
+      <div class="hero-stats animate-fade-in-delay-2">
+        <div class="hero-stat">
+          <span class="hero-stat-value">{stats.total}</span>
+          <span class="hero-stat-label">Contracts Scanned</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value {scoreColor(stats.avgScore)}">{stats.avgScore}</span>
+          <span class="hero-stat-label">Avg Risk Score</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" style="color: var(--sev-high);">{stats.threats}</span>
+          <span class="hero-stat-label">High Risk Detected</span>
+        </div>
+      </div>
+    {/if}
   </div>
 </section>
 
-<!-- Stats bar -->
-{#if stats.total > 0}
-  <section class="section" style="padding-top: var(--sp-12); padding-bottom: var(--sp-8);">
-    <div class="section-inner">
-      <div class="stats-grid animate-fade-in-delay-2">
-        <div class="stat-card">
-          <div class="stat-value">{stats.total}</div>
-          <div class="stat-label">Contracts Scanned</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value {scoreColor(stats.avgScore)}">{stats.avgScore}</div>
-          <div class="stat-label">Avg Risk Score</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color: var(--sev-high);">{stats.threats}</div>
-          <div class="stat-label">High Risk Detected</div>
-        </div>
-      </div>
-    </div>
-  </section>
-{/if}
 
 <!-- Recent scans -->
 {#if recentReports.length > 0}
@@ -213,10 +212,10 @@
   /* Hero */
   .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: min(100vh, 900px);
     display: flex;
     align-items: center;
-    padding: 96px 24px 64px;
+    padding: 80px 24px 48px;
     overflow: hidden;
     background: var(--c-secondary);
   }
@@ -311,7 +310,7 @@
   @media (min-width: 768px) {
     .hero-grid {
       grid-template-columns: 1.2fr 0.8fr;
-      align-items: end;
+      align-items: center;
       gap: 32px;
     }
   }
@@ -501,6 +500,44 @@
     animation: pulse-glow 2s ease-out infinite;
   }
 
+  /* Hero inline stats */
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--c-border);
+  }
+
+  .hero-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .hero-stat-value {
+    font-family: var(--f-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stat-label {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-stat-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--c-border);
+  }
+
   /* Section utilities */
   .section {
     position: relative;
@@ -531,45 +568,6 @@
     width: 12px;
     height: 1px;
     background: var(--c-primary);
-  }
-
-  /* Stats grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .stat-card {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    border-radius: var(--radius-md);
-    padding: 20px;
-    text-align: center;
-    transition: border-color var(--dur-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) {
-    .stat-card:hover {
-      border-color: var(--c-border-active);
-    }
-  }
-
-  .stat-value {
-    font-family: var(--f-display);
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--c-text-bright);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .stat-label {
-    font-family: var(--f-mono);
-    font-size: 0.6875rem;
-    color: var(--c-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 4px;
   }
 
   /* Contracts grid */
@@ -607,8 +605,13 @@
   }
 
   @media (max-width: 640px) {
-    .stats-grid {
-      grid-template-columns: 1fr;
+    .hero-stats {
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .hero-stat-divider {
+      display: none;
     }
   }
 </style>

@@ -129,26 +129,28 @@
     </div>
 
     <!-- Severity breakdown -->
-    <div class="severity-grid animate-fade-in-delay-1">
-      <div class="sev-card" style="border-top-color: var(--sev-critical);">
-        <div class="sev-value" style="color: var(--sev-critical); text-shadow: 0 0 12px rgba(255, 0, 102, 0.3);">{report.criticalCount}</div>
-        <div class="sev-name">Critical</div>
+    <div class="severity-section animate-fade-in-delay-1">
+      <div class="severity-total">
+        <span class="severity-total-value">{report.totalFindings}</span>
+        <span class="severity-total-label">Total Findings</span>
       </div>
-      <div class="sev-card" style="border-top-color: var(--sev-high);">
-        <div class="sev-value" style="color: var(--sev-high); text-shadow: 0 0 12px rgba(255, 51, 68, 0.3);">{report.highCount}</div>
-        <div class="sev-name">High</div>
-      </div>
-      <div class="sev-card" style="border-top-color: var(--sev-medium);">
-        <div class="sev-value" style="color: var(--sev-medium); text-shadow: 0 0 12px rgba(255, 184, 0, 0.3);">{report.mediumCount}</div>
-        <div class="sev-name">Medium</div>
-      </div>
-      <div class="sev-card" style="border-top-color: var(--sev-low);">
-        <div class="sev-value" style="color: var(--sev-low); text-shadow: 0 0 12px rgba(0, 240, 255, 0.3);">{report.lowCount}</div>
-        <div class="sev-name">Low</div>
-      </div>
-      <div class="sev-card">
-        <div class="sev-value">{report.totalFindings}</div>
-        <div class="sev-name">Total</div>
+      <div class="severity-grid">
+        <div class="sev-card" style="border-top-color: var(--sev-critical);">
+          <div class="sev-value" style="color: var(--sev-critical); text-shadow: 0 0 12px rgba(255, 0, 102, 0.3);">{report.criticalCount}</div>
+          <div class="sev-name">Critical</div>
+        </div>
+        <div class="sev-card" style="border-top-color: var(--sev-high);">
+          <div class="sev-value" style="color: var(--sev-high); text-shadow: 0 0 12px rgba(255, 51, 68, 0.3);">{report.highCount}</div>
+          <div class="sev-name">High</div>
+        </div>
+        <div class="sev-card" style="border-top-color: var(--sev-medium);">
+          <div class="sev-value" style="color: var(--sev-medium); text-shadow: 0 0 12px rgba(255, 184, 0, 0.3);">{report.mediumCount}</div>
+          <div class="sev-name">Medium</div>
+        </div>
+        <div class="sev-card" style="border-top-color: var(--sev-low);">
+          <div class="sev-value" style="color: var(--sev-low); text-shadow: 0 0 12px rgba(0, 240, 255, 0.3);">{report.lowCount}</div>
+          <div class="sev-name">Low</div>
+        </div>
       </div>
     </div>
 
@@ -157,7 +159,7 @@
       <div class="findings-section animate-fade-in-delay-2">
         <div class="section-label">Findings</div>
         <div class="findings-list">
-          {#each findings as finding}
+          {#each findings as finding, i}
             <FindingCard
               severity={finding.severity}
               title={finding.title}
@@ -165,6 +167,7 @@
               id={finding.id}
               confidence={finding.confidence}
               line={finding.line}
+              expanded={i < 2}
             />
           {/each}
         </div>
@@ -400,12 +403,50 @@ bool safe = score {'<='} 20; // Low risk threshold</code></pre>
     flex-shrink: 0;
   }
 
-  /* Severity grid */
+  /* Severity section */
+  .severity-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .severity-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 16px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .severity-total-value {
+    font-family: var(--f-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .severity-total-label {
+    font-family: var(--f-mono);
+    font-size: 0.55rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
+
   .severity-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-bottom: 32px;
+    flex: 1;
   }
 
   .sev-card {
@@ -521,8 +562,27 @@ bool safe = score {'<='} 20; // Low risk threshold</code></pre>
       flex-direction: column;
     }
 
+    .contract-address {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .severity-section {
+      flex-direction: column;
+    }
+
+    .severity-total {
+      width: 100%;
+      flex-direction: row;
+      gap: 12px;
+    }
+
     .severity-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+      width: 100%;
     }
 
     .proof-grid {

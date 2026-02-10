@@ -16,7 +16,7 @@
 
   $: config = severityConfig[severity] || severityConfig.info;
 
-  let expanded = false;
+  export let expanded = false;
 </script>
 
 <button
