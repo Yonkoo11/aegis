@@ -397,7 +397,6 @@
     align-items: center;
     padding: 80px 24px 48px;
     overflow: hidden;
-    background: var(--c-secondary);
   }
 
   .scan-line {
@@ -415,9 +414,9 @@
     position: absolute; inset: 0;
     background-image: linear-gradient(var(--c-border) 1px, transparent 1px), linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
     background-size: 60px 60px;
-    opacity: 0.3;
-    mask-image: radial-gradient(ellipse 70% 60% at 30% 70%, black 0%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 30% 70%, black 0%, transparent 100%);
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse 80% 70% at 40% 60%, black 0%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 40% 60%, black 0%, transparent 100%);
   }
 
   .hero-particles { position: absolute; inset: 0; overflow: hidden; z-index: 1; }
@@ -495,8 +494,23 @@
 
   /* ===== SECTION UTILITIES ===== */
   .section { position: relative; padding: 80px 24px; overflow: hidden; }
-  .section--alt { background: var(--c-secondary); }
-  .section-inner { max-width: 1320px; margin: 0 auto; }
+  .section--alt { /* transparent to let body gradient show */ }
+
+  /* Per-section glow orbs for depth */
+  .section::before {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .section:nth-of-type(2)::before { width: 500px; height: 400px; background: var(--c-primary); top: -10%; left: -10%; opacity: 0.05; }
+  .section:nth-of-type(3)::before { width: 400px; height: 400px; background: var(--c-accent); top: 20%; right: -5%; opacity: 0.04; }
+  .section:nth-of-type(4)::before { width: 600px; height: 400px; background: var(--c-primary); bottom: -15%; left: 30%; opacity: 0.04; }
+  .section:nth-of-type(5)::before { width: 400px; height: 300px; background: var(--c-accent); top: 10%; left: -10%; opacity: 0.03; }
+  .section:nth-of-type(6)::before { width: 500px; height: 400px; background: var(--c-primary); top: -20%; right: -10%; opacity: 0.04; }
+  .section-inner { max-width: 1320px; margin: 0 auto; position: relative; z-index: 1; }
   .section-label {
     font-family: var(--f-mono); font-size: 0.6875rem; color: var(--c-muted);
     text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 16px;

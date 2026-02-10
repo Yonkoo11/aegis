@@ -100,6 +100,48 @@ html, body {
 
 #app {
   min-height: 100vh;
+  position: relative;
+}
+
+/* === Layered background system === */
+
+/* Layer 1: Dot grid */
+#app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Layer 2: Noise texture */
+#app::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Layer 3: Ambient glow orbs (positioned via gradient on body) */
+body {
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(0, 240, 255, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 30%, rgba(255, 0, 102, 0.035) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+    var(--c-secondary);
+}
+
+/* Ensure content sits above background layers */
+main, header, footer, nav {
+  position: relative;
+  z-index: 1;
 }
 
 /* Display headings */
