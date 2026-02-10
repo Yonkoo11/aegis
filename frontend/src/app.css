@@ -1,21 +1,83 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 :root {
-  --green: #22c55e;
-  --yellow: #eab308;
-  --orange: #f97316;
-  --red: #ef4444;
-  --bg-primary: #06060b;
-  --bg-secondary: #0d0d14;
-  --bg-card: #13131f;
-  --bg-card-hover: #1a1a2e;
-  --border: #1e1e32;
-  --text-primary: #e4e4e7;
-  --text-secondary: #71717a;
-  --accent: #6366f1;
-  --accent-light: #818cf8;
+  /* Color — Duotone (Cyberpunk) */
+  --c-primary: #00F0FF;
+  --c-primary-dim: rgba(0, 240, 255, 0.15);
+  --c-primary-glow: rgba(0, 240, 255, 0.4);
+  --c-secondary: #0A0A0F;
+  --c-accent: #FF0066;
+  --c-accent-dim: rgba(255, 0, 102, 0.15);
+  --c-accent-glow: rgba(255, 0, 102, 0.4);
+  --c-surface: #12121A;
+  --c-surface-raised: #1A1A26;
+  --c-surface-overlay: rgba(10, 10, 15, 0.98);
+  --c-text: #E0E0E8;
+  --c-text-bright: #FFFFFF;
+  --c-muted: #5A5A6E;
+  --c-success: #00FF88;
+  --c-warning: #FFB800;
+  --c-error: #FF3344;
+  --c-border: rgba(255, 255, 255, 0.06);
+  --c-border-active: rgba(0, 240, 255, 0.3);
+
+  /* Severity */
+  --sev-critical: #FF0066;
+  --sev-high: #FF3344;
+  --sev-medium: #FFB800;
+  --sev-low: #00F0FF;
+  --sev-info: #5A5A6E;
+
+  /* Typography */
+  --f-display: 'Space Grotesk', sans-serif;
+  --f-body: 'Cormorant Garamond', serif;
+  --f-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing — 4px base */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+
+  /* Border radius — only 2 values */
+  --radius-sm: 2px;
+  --radius-md: 6px;
+
+  /* Shadows */
+  --shadow-glow-primary: 0 0 20px rgba(0, 240, 255, 0.25), 0 0 60px rgba(0, 240, 255, 0.08);
+  --shadow-glow-accent: 0 0 20px rgba(255, 0, 102, 0.25), 0 0 60px rgba(255, 0, 102, 0.08);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-focus: 0 0 0 2px var(--c-primary), 0 0 12px rgba(0, 240, 255, 0.3);
+
+  /* Z-index scale */
+  --z-base: 1;
+  --z-card: 10;
+  --z-sticky: 100;
+  --z-overlay: 500;
+  --z-nav: 600;
+  --z-max: 1000;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 250ms;
+  --dur-slow: 500ms;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 html {
@@ -25,27 +87,36 @@ html {
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--c-secondary);
+  color: var(--c-text);
+  font-family: var(--f-body);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #app {
   min-height: 100vh;
 }
 
-/* Monospace elements */
-.font-mono, code, pre, [class*="font-mono"] {
-  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+/* Display headings */
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--f-display);
 }
 
-/* Score color utilities */
-.score-low { color: var(--green); }
-.score-medium { color: var(--yellow); }
-.score-high { color: var(--orange); }
-.score-critical { color: var(--red); }
+/* Monospace */
+.font-mono, code, pre, [class*="font-mono"] {
+  font-family: var(--f-mono);
+}
+
+/* Score color utilities (cyberpunk palette) */
+.score-low { color: var(--c-success); }
+.score-medium { color: var(--c-warning); }
+.score-high { color: var(--sev-high); }
+.score-critical { color: var(--sev-critical); }
 
 /* Animations */
 @keyframes fade-in {
@@ -53,9 +124,9 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fade-in-fast {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
 }
 
 @keyframes pulse-glow {
@@ -63,23 +134,28 @@ html, body {
   50% { opacity: 0.8; }
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .animate-fade-in {
-  animation: fade-in 0.4s ease-out both;
+  animation: fade-in 0.4s var(--ease-out) both;
 }
 
 .animate-fade-in-delay-1 {
-  animation: fade-in 0.4s ease-out 0.1s both;
+  animation: fade-in 0.4s var(--ease-out) 0.1s both;
 }
 
 .animate-fade-in-delay-2 {
-  animation: fade-in 0.4s ease-out 0.2s both;
+  animation: fade-in 0.4s var(--ease-out) 0.2s both;
 }
 
 .animate-fade-in-delay-3 {
-  animation: fade-in 0.4s ease-out 0.3s both;
+  animation: fade-in 0.4s var(--ease-out) 0.3s both;
 }
 
-/* Scrollbar */
+/* Scrollbar — cyberpunk */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -90,30 +166,36 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: var(--c-muted);
+  border-radius: var(--radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--c-primary);
 }
 
 /* Selection */
 ::selection {
-  background: var(--accent);
-  color: white;
+  background: var(--c-primary);
+  color: var(--c-secondary);
 }
 
-/* Select dropdown dark mode fix */
+/* Focus */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Select dropdown */
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2371717a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%235A5A6E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 36px !important;
+  padding-right: 36px;
 }
 
 select option {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background: var(--c-surface);
+  color: var(--c-text);
 }

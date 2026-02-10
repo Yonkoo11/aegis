@@ -7,40 +7,193 @@
 
 <a
   href="#/report/{report.address}"
-  class="block border border-[var(--border)] rounded-xl p-4 transition-all duration-200 hover:bg-[var(--bg-card-hover)] hover:border-[var(--accent)]/30 hover:-translate-y-0.5 hover:shadow-[0_4px_24px_rgba(0,0,0,0.3)] bg-[var(--bg-card)] no-underline group"
+  class="card"
 >
-  <div class="flex items-center justify-between">
-    <div class="min-w-0">
-      <div class="flex items-center gap-2">
-        <span class="font-semibold text-sm group-hover:text-[var(--accent-light)] transition-colors">{report.contractName || 'Unknown'}</span>
-        {#if report.sourceVerified}
-          <span class="text-[10px] px-1 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">Verified</span>
-        {:else}
-          <span class="text-[10px] px-1 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">Unverified</span>
+  <!-- Top accent line -->
+  <div class="card-accent" style="background: linear-gradient(90deg, transparent, {scoreBgColor(report.riskScore)}, transparent);"></div>
+
+  <div class="card-inner">
+    <div class="card-header">
+      <div class="card-info">
+        <div class="card-name-row">
+          <span class="card-name">{report.contractName || 'Unknown'}</span>
+          {#if report.sourceVerified}
+            <span class="verify-badge verified">Verified</span>
+          {:else}
+            <span class="verify-badge unverified">Unverified</span>
+          {/if}
+        </div>
+        <p class="card-address">{truncateAddress(report.address)}</p>
+      </div>
+      <div class="card-score">
+        <span class="score-value {scoreColor(report.riskScore)}" style="text-shadow: 0 0 20px {scoreBgColor(report.riskScore)}44">{report.riskScore}</span>
+        <span class="score-risk">{report.riskLevel}</span>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span class="finding-count">{report.totalFindings} findings</span>
+      <div class="severity-counts">
+        {#if report.criticalCount > 0}
+          <span class="sev-count" style="color: var(--sev-critical);">{report.criticalCount}C</span>
+        {/if}
+        {#if report.highCount > 0}
+          <span class="sev-count" style="color: var(--sev-high);">{report.highCount}H</span>
+        {/if}
+        {#if report.mediumCount > 0}
+          <span class="sev-count" style="color: var(--sev-medium);">{report.mediumCount}M</span>
+        {/if}
+        {#if report.lowCount > 0}
+          <span class="sev-count" style="color: var(--sev-low);">{report.lowCount}L</span>
         {/if}
       </div>
-      <p class="text-xs text-[var(--text-secondary)] font-mono mt-1 m-0">{truncateAddress(report.address)}</p>
+      <span class="card-time">{timeAgo(report.timestamp)}</span>
     </div>
-    <div class="text-right shrink-0 ml-4">
-      <div class="text-2xl font-bold {scoreColor(report.riskScore)}" style="text-shadow: 0 0 20px {scoreBgColor(report.riskScore)}33">{report.riskScore}</div>
-      <div class="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">{report.riskLevel}</div>
-    </div>
-  </div>
-
-  <div class="flex items-center gap-3 mt-3 pt-3 border-t border-[var(--border)]">
-    <span class="text-[10px] text-[var(--text-secondary)]">{report.totalFindings} findings</span>
-    {#if report.criticalCount > 0}
-      <span class="text-[10px] text-red-400 font-medium">{report.criticalCount}C</span>
-    {/if}
-    {#if report.highCount > 0}
-      <span class="text-[10px] text-orange-400 font-medium">{report.highCount}H</span>
-    {/if}
-    {#if report.mediumCount > 0}
-      <span class="text-[10px] text-yellow-400 font-medium">{report.mediumCount}M</span>
-    {/if}
-    {#if report.lowCount > 0}
-      <span class="text-[10px] text-blue-400 font-medium">{report.lowCount}L</span>
-    {/if}
-    <span class="ml-auto text-[10px] text-[var(--text-secondary)]">{timeAgo(report.timestamp)}</span>
   </div>
 </a>
+
+<style>
+  .card {
+    display: block;
+    position: relative;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      border-color: var(--c-border-active);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .card:hover .card-name {
+      color: var(--c-primary);
+    }
+  }
+
+  .card-accent {
+    height: 1px;
+    opacity: 0.5;
+  }
+
+  .card-inner {
+    padding: 16px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .card-info {
+    min-width: 0;
+  }
+
+  .card-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-name {
+    font-family: var(--f-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-text);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .verify-badge {
+    font-family: var(--f-mono);
+    font-size: 0.55rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+  }
+
+  .verify-badge.verified {
+    color: var(--c-success);
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  .verify-badge.unverified {
+    color: var(--c-error);
+    background: rgba(255, 51, 68, 0.1);
+    border: 1px solid rgba(255, 51, 68, 0.2);
+  }
+
+  .card-address {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    margin: 4px 0 0;
+  }
+
+  .card-score {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .score-value {
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-risk {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 0.55rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--c-border);
+  }
+
+  .finding-count {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    color: var(--c-muted);
+  }
+
+  .severity-counts {
+    display: flex;
+    gap: 8px;
+  }
+
+  .sev-count {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+  }
+
+  .card-time {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    color: var(--c-muted);
+    margin-left: auto;
+  }
+</style>

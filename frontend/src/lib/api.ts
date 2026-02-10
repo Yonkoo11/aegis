@@ -1,8 +1,23 @@
 /**
  * API client for the Aegis agent backend.
+ * Falls back to static data when agent is unavailable (e.g. GitHub Pages).
  */
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const STATIC_DATA = import.meta.env.BASE_URL + 'data/reports.json';
+
+let agentAvailable: boolean | null = null;
+
+async function isAgentUp(): Promise<boolean> {
+  if (agentAvailable !== null) return agentAvailable;
+  try {
+    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2000) });
+    agentAvailable = res.ok;
+  } catch {
+    agentAvailable = false;
+  }
+  return agentAvailable;
+}
 
 export interface ReportSummary {
   address: string;
@@ -21,7 +36,7 @@ export interface ReportSummary {
 }
 
 export interface ScanResponse {
-  status: 'completed' | 'queued' | 'processing';
+  status: 'completed' | 'queued' | 'processing' | 'offline';
   message?: string;
   position?: number;
   estimatedTime?: string;
@@ -36,18 +51,32 @@ export interface StatusResponse {
 }
 
 export async function fetchAllReports(): Promise<ReportSummary[]> {
-  const res = await fetch(`${API_BASE}/reports.json`);
-  if (!res.ok) return [];
-  return res.json();
+  if (await isAgentUp()) {
+    const res = await fetch(`${API_BASE}/reports.json`);
+    if (res.ok) return res.json();
+  }
+  // Fallback: static data baked into the build
+  try {
+    const res = await fetch(STATIC_DATA);
+    if (res.ok) return res.json();
+  } catch { /* no static data */ }
+  return [];
 }
 
 export async function fetchReport(address: string): Promise<ReportSummary | null> {
-  const res = await fetch(`${API_BASE}/report/${address}`);
-  if (!res.ok) return null;
-  return res.json();
+  if (await isAgentUp()) {
+    const res = await fetch(`${API_BASE}/report/${address}`);
+    if (res.ok) return res.json();
+  }
+  // Fallback: find in static data
+  const all = await fetchAllReports();
+  return all.find(r => r.address.toLowerCase() === address.toLowerCase()) || null;
 }
 
 export async function requestScan(address: string, force = false): Promise<ScanResponse> {
+  if (!(await isAgentUp())) {
+    return { status: 'offline', error: 'Agent is offline. Run the Aegis agent locally to scan contracts.' };
+  }
   const res = await fetch(`${API_BASE}/scan`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -57,8 +86,15 @@ export async function requestScan(address: string, force = false): Promise<ScanR
 }
 
 export async function checkStatus(address: string): Promise<StatusResponse> {
+  if (!(await isAgentUp())) {
+    return { status: 'unknown' };
+  }
   const res = await fetch(`${API_BASE}/status/${address}`);
   return res.json();
+}
+
+export function isAgentOnline(): boolean {
+  return agentAvailable === true;
 }
 
 export function scoreColor(score: number): string {
@@ -76,10 +112,10 @@ export function scoreLabel(score: number): string {
 }
 
 export function scoreBgColor(score: number): string {
-  if (score <= 20) return '#22c55e';
-  if (score <= 50) return '#eab308';
-  if (score <= 75) return '#f97316';
-  return '#ef4444';
+  if (score <= 20) return '#00FF88';
+  if (score <= 50) return '#FFB800';
+  if (score <= 75) return '#FF3344';
+  return '#FF0066';
 }
 
 export function truncateAddress(addr: string): string {

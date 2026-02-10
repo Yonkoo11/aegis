@@ -7,12 +7,12 @@
     "totalFindings": 21,
     "criticalCount": 0,
     "highCount": 6,
-    "mediumCount": 11,
-    "lowCount": 3,
+    "mediumCount": 12,
+    "lowCount": 2,
     "sourceVerified": true,
-    "ipfsHash": "",
-    "txHash": "",
-    "timestamp": "2026-02-09T21:31:05.087Z"
+    "ipfsHash": "QmNimG5LhujAh8iRrXkKCBBWX7ULnUt6sTySP8u2X7iDKX",
+    "txHash": "0x1dfc82233509b9de662c83acdc3d19cc1a3474a2cbe069a56115a9ff6b126fac",
+    "timestamp": "2026-02-10T08:27:46.399Z"
   },
   {
     "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
@@ -75,36 +75,6 @@
     "timestamp": "2026-02-09T21:33:34.929Z"
   },
   {
-    "address": "0xdead000000000000000000000000000000000001",
-    "contractName": "SuspiciousToken",
-    "riskScore": 85,
-    "riskLevel": "critical",
-    "totalFindings": 12,
-    "criticalCount": 2,
-    "highCount": 3,
-    "mediumCount": 4,
-    "lowCount": 3,
-    "sourceVerified": false,
-    "ipfsHash": "QmSuspiciousDemo",
-    "txHash": "0xdemo6",
-    "timestamp": "2026-02-09T07:30:00.000Z"
-  },
-  {
-    "address": "0xdead000000000000000000000000000000000002",
-    "contractName": "RugPullToken",
-    "riskScore": 92,
-    "riskLevel": "critical",
-    "totalFindings": 15,
-    "criticalCount": 3,
-    "highCount": 4,
-    "mediumCount": 5,
-    "lowCount": 3,
-    "sourceVerified": false,
-    "ipfsHash": "QmRugPullDemo",
-    "txHash": "0xdemo7",
-    "timestamp": "2026-02-09T07:00:00.000Z"
-  },
-  {
     "address": "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
     "contractName": "BEP20DAI",
     "riskScore": 38,
@@ -118,21 +88,6 @@
     "ipfsHash": "",
     "txHash": "",
     "timestamp": "2026-02-09T21:34:15.477Z"
-  },
-  {
-    "address": "0xdead000000000000000000000000000000000003",
-    "contractName": "HoneypotSwap",
-    "riskScore": 68,
-    "riskLevel": "high",
-    "totalFindings": 9,
-    "criticalCount": 1,
-    "highCount": 2,
-    "mediumCount": 3,
-    "lowCount": 3,
-    "sourceVerified": true,
-    "ipfsHash": "QmHoneypotDemo",
-    "txHash": "0xdemo9",
-    "timestamp": "2026-02-09T06:00:00.000Z"
   },
   {
     "address": "0x13f4ea83d0bd40e75c8222255bc855a974568dd4",

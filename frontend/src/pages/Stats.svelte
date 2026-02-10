@@ -5,7 +5,6 @@
   let reports: ReportSummary[] = [];
   let loading = true;
 
-  // Computed stats
   let totalScanned = 0;
   let avgScore = 0;
   let distribution = { low: 0, medium: 0, high: 0, critical: 0 };
@@ -44,64 +43,75 @@
     totalFindings = critTotal + highTotal + medTotal + lowTotal;
 
     topVulnTypes = [
-      { name: 'Critical', count: critTotal, color: '#ef4444' },
-      { name: 'High', count: highTotal, color: '#f97316' },
-      { name: 'Medium', count: medTotal, color: '#eab308' },
-      { name: 'Low', count: lowTotal, color: '#3b82f6' },
+      { name: 'Critical', count: critTotal, color: 'var(--sev-critical)' },
+      { name: 'High', count: highTotal, color: 'var(--sev-high)' },
+      { name: 'Medium', count: medTotal, color: 'var(--sev-medium)' },
+      { name: 'Low', count: lowTotal, color: 'var(--sev-low)' },
     ].filter(v => v.count > 0);
   }
+
+  const distBars = [
+    { label: 'Low Risk', range: '0-20', key: 'low', color: 'var(--c-success)' },
+    { label: 'Medium Risk', range: '21-50', key: 'medium', color: 'var(--sev-medium)' },
+    { label: 'High Risk', range: '51-75', key: 'high', color: 'var(--sev-high)' },
+    { label: 'Critical Risk', range: '76-100', key: 'critical', color: 'var(--sev-critical)' },
+  ];
 </script>
 
-<div class="max-w-6xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-bold mb-1 animate-fade-in">BSC Security Health</h1>
-  <p class="text-sm text-[var(--text-secondary)] mb-8 animate-fade-in">Aggregated security metrics across {totalScanned} audited contracts</p>
+<div class="stats-page">
+  <!-- Header -->
+  <div class="page-header animate-fade-in">
+    <div class="section-label">Dashboard</div>
+    <h1 class="page-title">BSC Security Health</h1>
+    <p class="page-subtitle">Aggregated security metrics across {totalScanned} audited contracts</p>
+  </div>
 
   {#if loading}
-    <div class="flex justify-center py-12">
-      <div class="w-6 h-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+    <div class="loading-state">
+      <div class="scan-line-loader"></div>
     </div>
   {:else if totalScanned === 0}
-    <div class="text-center py-12 text-[var(--text-secondary)] animate-fade-in">No data yet. Scan some contracts first.</div>
+    <div class="empty-state animate-fade-in">
+      <p class="empty-text">No data yet. Scan some contracts first.</p>
+    </div>
   {:else}
-    <!-- Overview cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-in-delay-1">
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 text-center hover:border-[var(--accent)]/20 transition-colors">
-        <div class="text-3xl font-bold">{totalScanned}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Contracts Scanned</div>
+    <!-- Overview grid -->
+    <div class="overview-grid animate-fade-in-delay-1">
+      <div class="overview-card">
+        <div class="ov-label">Contracts Scanned</div>
+        <div class="ov-value">{totalScanned}</div>
       </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 text-center hover:border-[var(--accent)]/20 transition-colors">
-        <div class="text-3xl font-bold" style="color: {scoreBgColor(avgScore)}; text-shadow: 0 0 24px {scoreBgColor(avgScore)}33">{avgScore}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Average Risk Score</div>
+      <div class="overview-card">
+        <div class="ov-label">Average Risk Score</div>
+        <div class="ov-value" style="color: {scoreBgColor(avgScore)}; text-shadow: 0 0 20px {scoreBgColor(avgScore)}33">{avgScore}</div>
       </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 text-center hover:border-green-500/20 transition-colors">
-        <div class="text-3xl font-bold text-green-400">{verifiedPct}%</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Source Verified</div>
+      <div class="overview-card">
+        <div class="ov-label">Source Verified</div>
+        <div class="ov-value" style="color: var(--c-success); text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);">{verifiedPct}%</div>
       </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 text-center hover:border-red-500/20 transition-colors">
-        <div class="text-3xl font-bold text-red-400">{distribution.critical + distribution.high}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">High Risk Contracts</div>
+      <div class="overview-card">
+        <div class="ov-label">High Risk Contracts</div>
+        <div class="ov-value" style="color: var(--sev-high); text-shadow: 0 0 20px rgba(255, 51, 68, 0.2);">{distribution.critical + distribution.high}</div>
       </div>
     </div>
 
-    <!-- Distribution -->
-    <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 mb-8 animate-fade-in-delay-2">
-      <h3 class="text-sm font-semibold mb-4 m-0">Risk Distribution</h3>
-      <div class="space-y-3">
-        {#each [
-          { label: 'Low Risk (0-20)', count: distribution.low, color: '#22c55e' },
-          { label: 'Medium Risk (21-50)', count: distribution.medium, color: '#eab308' },
-          { label: 'High Risk (51-75)', count: distribution.high, color: '#f97316' },
-          { label: 'Critical Risk (76-100)', count: distribution.critical, color: '#ef4444' },
-        ] as bar}
-          <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-[var(--text-secondary)]">{bar.label}</span>
-              <span class="font-medium" style="color: {bar.color}">{bar.count} <span class="text-[var(--text-secondary)] font-normal">/ {totalScanned}</span></span>
+    <!-- Risk distribution -->
+    <div class="panel animate-fade-in-delay-2">
+      <div class="section-label">Risk Distribution</div>
+      <div class="dist-bars">
+        {#each distBars as bar}
+          <div class="dist-row">
+            <div class="dist-header">
+              <span class="dist-name">{bar.label} ({bar.range})</span>
+              <span class="dist-count" style="color: {bar.color};">
+                {distribution[bar.key]}
+                <span class="dist-total">/ {totalScanned}</span>
+              </span>
             </div>
-            <div class="h-2.5 bg-[var(--bg-primary)] rounded-full overflow-hidden">
+            <div class="dist-track">
               <div
-                class="h-full rounded-full transition-all duration-700 ease-out"
-                style="width: {totalScanned > 0 ? (bar.count / totalScanned) * 100 : 0}%; background: {bar.color}; box-shadow: 0 0 8px {bar.color}44"
+                class="dist-fill"
+                style="width: {totalScanned > 0 ? (distribution[bar.key] / totalScanned) * 100 : 0}%; background: {bar.color}; box-shadow: 0 0 8px {bar.color}44;"
               ></div>
             </div>
           </div>
@@ -109,15 +119,18 @@
       </div>
     </div>
 
-    <!-- Finding types -->
+    <!-- Findings by severity -->
     {#if topVulnTypes.length > 0}
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 animate-fade-in-delay-3">
-        <h3 class="text-sm font-semibold mb-4 m-0">Findings by Severity <span class="text-[var(--text-secondary)] font-normal ml-1">({totalFindings} total)</span></h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="panel animate-fade-in-delay-3">
+        <div class="section-label">
+          Findings by Severity
+          <span class="label-meta">{totalFindings} total</span>
+        </div>
+        <div class="vuln-grid">
           {#each topVulnTypes as vuln}
-            <div class="text-center p-3 rounded-lg bg-[var(--bg-primary)]">
-              <div class="text-2xl font-bold" style="color: {vuln.color}">{vuln.count}</div>
-              <div class="text-xs text-[var(--text-secondary)] mt-1">{vuln.name}</div>
+            <div class="vuln-card">
+              <div class="vuln-count" style="color: {vuln.color}; text-shadow: 0 0 16px {vuln.color}33;">{vuln.count}</div>
+              <div class="vuln-name">{vuln.name}</div>
             </div>
           {/each}
         </div>
@@ -125,3 +138,227 @@
     {/if}
   {/if}
 </div>
+
+<style>
+  .stats-page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 96px 24px 80px;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 1px;
+    background: var(--c-primary);
+  }
+
+  .label-meta {
+    font-weight: 400;
+    opacity: 0.5;
+  }
+
+  .page-title {
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    margin: 0 0 4px;
+  }
+
+  .page-subtitle {
+    font-family: var(--f-mono);
+    font-size: 0.8125rem;
+    color: var(--c-muted);
+    margin: 0;
+  }
+
+  /* Overview */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .overview-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    text-align: center;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .overview-card:hover {
+      border-color: var(--c-border-active);
+    }
+  }
+
+  .ov-label {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .ov-value {
+    font-family: var(--f-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Panel */
+  .panel {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* Distribution bars */
+  .dist-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .dist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .dist-name {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+  }
+
+  .dist-count {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dist-total {
+    color: var(--c-muted);
+    font-weight: 400;
+  }
+
+  .dist-track {
+    height: 8px;
+    background: var(--c-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .dist-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.7s var(--ease-out);
+  }
+
+  /* Vuln grid */
+  .vuln-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .vuln-card {
+    text-align: center;
+    padding: 16px;
+    background: var(--c-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  .vuln-count {
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .vuln-name {
+    font-family: var(--f-mono);
+    font-size: 0.6rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  /* States */
+  .loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  .scan-line-loader {
+    width: 48px;
+    height: 2px;
+    background: var(--c-primary);
+    border-radius: 1px;
+    box-shadow: 0 0 12px var(--c-primary-glow);
+    animation: loader-pulse 1.5s var(--ease-out) infinite;
+  }
+
+  @keyframes loader-pulse {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .empty-text {
+    font-family: var(--f-body);
+    color: var(--c-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .overview-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .vuln-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .overview-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

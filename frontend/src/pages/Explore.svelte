@@ -20,7 +20,6 @@
   $: {
     let result = [...reports];
 
-    // Search filter
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(r =>
@@ -29,12 +28,10 @@
       );
     }
 
-    // Risk filter
     if (filterRisk !== 'all') {
       result = result.filter(r => r.riskLevel === filterRisk);
     }
 
-    // Sort
     if (sortBy === 'score') {
       result.sort((a, b) => b.riskScore - a.riskScore);
     } else if (sortBy === 'newest') {
@@ -46,53 +43,54 @@
     filtered = result;
   }
 
-  const riskColors: Record<string, string> = {
-    critical: 'text-red-400 border-red-500/30 bg-red-500/10',
-    high: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-    medium: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-    low: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-  };
+  const riskFilters = [
+    { key: 'all', label: 'All', color: 'var(--c-primary)' },
+    { key: 'critical', label: 'Critical', color: 'var(--sev-critical)' },
+    { key: 'high', label: 'High', color: 'var(--sev-high)' },
+    { key: 'medium', label: 'Medium', color: 'var(--sev-medium)' },
+    { key: 'low', label: 'Low', color: 'var(--sev-low)' },
+  ];
 </script>
 
-<div class="max-w-6xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-bold mb-1 animate-fade-in">Explorer</h1>
-  <p class="text-sm text-[var(--text-secondary)] mb-6 animate-fade-in">{reports.length} contracts audited on BNB Chain</p>
+<div class="explore-page">
+  <!-- Header -->
+  <div class="page-header animate-fade-in">
+    <div class="section-label">Explorer</div>
+    <h1 class="page-title">Audited Contracts</h1>
+    <p class="page-subtitle">{reports.length} contracts scanned on BNB Chain</p>
+  </div>
 
   <!-- Filters -->
-  <div class="flex flex-wrap items-center gap-3 mb-6 animate-fade-in-delay-1">
-    <div class="flex-1 min-w-[200px] relative">
-      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <div class="filter-bar animate-fade-in-delay-1">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
       </svg>
+      <label for="explore-search" class="sr-only">Search contracts</label>
       <input
+        id="explore-search"
         bind:value={search}
         type="text"
-        placeholder="Search by address or name..."
-        class="w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-lg pl-10 pr-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/40 focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
+        placeholder="Search address or name..."
+        class="search-input"
       />
     </div>
 
-    <select
-      bind:value={sortBy}
-      class="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]/50 transition-colors cursor-pointer"
-    >
+    <select bind:value={sortBy} class="sort-select">
       <option value="newest">Newest</option>
       <option value="score">Highest Risk</option>
       <option value="name">Name A-Z</option>
     </select>
 
-    <div class="flex gap-1">
-      {#each ['all', 'critical', 'high', 'medium', 'low'] as risk}
+    <div class="risk-filters">
+      {#each riskFilters as rf}
         <button
-          on:click={() => filterRisk = risk}
-          class="px-2.5 py-1.5 text-xs rounded-lg border transition-all cursor-pointer
-            {filterRisk === risk
-              ? (risk === 'all'
-                ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent-light)]'
-                : riskColors[risk] || 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent-light)]')
-              : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/20'}"
+          on:click={() => filterRisk = rf.key}
+          class="risk-btn"
+          class:active={filterRisk === rf.key}
+          style="{filterRisk === rf.key ? `color: ${rf.color}; border-color: ${rf.color}; background: ${rf.color}15;` : ''}"
         >
-          {risk === 'all' ? 'All' : risk.charAt(0).toUpperCase() + risk.slice(1)}
+          {rf.label}
         </button>
       {/each}
     </div>
@@ -100,21 +98,244 @@
 
   <!-- Results -->
   {#if loading}
-    <div class="flex justify-center py-12">
-      <div class="w-6 h-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+    <div class="loading-state">
+      <div class="scan-line-loader"></div>
     </div>
   {:else if filtered.length === 0}
-    <div class="text-center py-12 text-[var(--text-secondary)] animate-fade-in">
-      {reports.length === 0 ? 'No contracts scanned yet.' : 'No contracts match your filters.'}
+    <div class="empty-state animate-fade-in">
+      <p class="empty-text">
+        {reports.length === 0 ? 'No contracts scanned yet.' : 'No contracts match your filters.'}
+      </p>
     </div>
   {:else}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-fade-in-delay-2">
+    <div class="contracts-grid animate-fade-in-delay-2">
       {#each filtered as report}
         <ContractCard {report} />
       {/each}
     </div>
-    <div class="text-center text-xs text-[var(--text-secondary)] mt-6 pb-8">
+    <div class="results-count">
       Showing {filtered.length} of {reports.length} contracts
     </div>
   {/if}
 </div>
+
+<style>
+  .explore-page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 96px 24px 80px;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 1px;
+    background: var(--c-primary);
+  }
+
+  .page-title {
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    margin: 0 0 4px;
+  }
+
+  .page-subtitle {
+    font-family: var(--f-mono);
+    font-size: 0.8125rem;
+    color: var(--c-muted);
+    margin: 0;
+  }
+
+  /* Filters */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-muted);
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px 8px 36px;
+    font-family: var(--f-mono);
+    font-size: 1rem;
+    color: var(--c-text);
+    outline: none;
+    caret-color: var(--c-primary);
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .search-input::placeholder {
+    color: var(--c-muted);
+    opacity: 0.5;
+  }
+
+  .search-input:focus {
+    border-color: var(--c-border-active);
+  }
+
+  .sort-select {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 36px 8px 12px;
+    font-family: var(--f-mono);
+    font-size: 0.8125rem;
+    color: var(--c-text);
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .sort-select:focus {
+    border-color: var(--c-border-active);
+  }
+
+  .risk-filters {
+    display: flex;
+    gap: 4px;
+  }
+
+  .risk-btn {
+    padding: 6px 12px;
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    background: var(--c-surface);
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out);
+    min-height: 36px;
+  }
+
+  @media (hover: hover) {
+    .risk-btn:hover {
+      border-color: var(--c-border-active);
+    }
+  }
+
+  /* Grid */
+  .contracts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .contracts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contracts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .results-count {
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    margin-top: 24px;
+    padding-bottom: 32px;
+  }
+
+  /* States */
+  .loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  .scan-line-loader {
+    width: 48px;
+    height: 2px;
+    background: var(--c-primary);
+    border-radius: 1px;
+    box-shadow: 0 0 12px var(--c-primary-glow);
+    animation: loader-pulse 1.5s var(--ease-out) infinite;
+  }
+
+  @keyframes loader-pulse {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .empty-text {
+    font-family: var(--f-body);
+    color: var(--c-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .filter-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .risk-filters {
+      flex-wrap: wrap;
+    }
+  }
+</style>

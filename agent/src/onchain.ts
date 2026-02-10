@@ -17,9 +17,13 @@ const ORACLE_ABI = [
   "event ReportSubmitted(address indexed target, uint8 riskScore, string ipfsHash)",
 ];
 
+const POLL_INTERVAL_MS = 15_000; // Poll for events every 15s
+
 export class OracleClient {
   private contract: ethers.Contract;
   private signer: ethers.Wallet;
+  private lastBlock: number = 0;
+  private pollTimer?: ReturnType<typeof setInterval>;
 
   constructor(
     oracleAddress: string,
@@ -72,9 +76,36 @@ export class OracleClient {
   async listenForRequests(
     callback: (target: string, requester: string) => void
   ): Promise<void> {
-    this.contract.on("AuditRequested", (target: string, requester: string) => {
-      callback(target, requester);
-    });
+    // Use polling instead of contract.on() — HTTP RPCs don't support eth_newFilter
+    const provider = this.signer.provider!;
+    this.lastBlock = await provider.getBlockNumber();
+    console.log(`Polling for AuditRequested events from block ${this.lastBlock}`);
+
+    this.pollTimer = setInterval(async () => {
+      try {
+        const currentBlock = await provider.getBlockNumber();
+        if (currentBlock <= this.lastBlock) return;
+
+        const events = await this.contract.queryFilter(
+          this.contract.filters.AuditRequested(),
+          this.lastBlock + 1,
+          currentBlock
+        );
+
+        for (const event of events) {
+          const args = (event as ethers.EventLog).args;
+          if (args) callback(args[0], args[1]);
+        }
+
+        this.lastBlock = currentBlock;
+      } catch {
+        // Silently skip — transient RPC errors are expected
+      }
+    }, POLL_INTERVAL_MS);
+  }
+
+  stopListening(): void {
+    if (this.pollTimer) clearInterval(this.pollTimer);
   }
 
   get address(): string {

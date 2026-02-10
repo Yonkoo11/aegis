@@ -32,10 +32,16 @@
 
     scanError = '';
     scanning = true;
-    scanMessage = 'Checking...';
+    scanMessage = 'Initializing scan...';
 
     try {
       const result = await requestScan(trimmed);
+
+      if (result.status === 'offline') {
+        scanError = result.error || 'Agent offline. Run the Aegis agent to scan live contracts.';
+        scanning = false;
+        return;
+      }
 
       if (result.status === 'completed' && result.report) {
         navigate(`/report/${trimmed.toLowerCase()}`);
@@ -63,7 +69,7 @@
         scanError = status.error || 'Scan failed';
         scanning = false;
       } else if (status.status === 'processing') {
-        scanMessage = 'AI agent is analyzing the contract...';
+        scanMessage = 'AI agent analyzing contract...';
       }
     }, 5000);
   }
@@ -80,89 +86,529 @@
   }
 </script>
 
-<div class="max-w-6xl mx-auto px-4">
-  <!-- Hero -->
-  <section class="pt-20 pb-16 text-center relative">
-    <!-- Gradient glow -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--accent)]/5 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- Hero: Immersive full-viewport -->
+<section class="hero">
+  <!-- Scan line sweep -->
+  <div class="scan-line"></div>
 
-    <div class="relative">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 mb-6 animate-fade-in">
-        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></div>
-        <span class="text-xs text-[var(--accent-light)] font-medium">AI-Powered Security Oracle on BNB Chain</span>
+  <!-- Grid pattern background -->
+  <div class="grid-pattern"></div>
+
+  <!-- Floating particles -->
+  <div class="hero-particles">
+    {#each Array(12) as _, i}
+      <div class="particle" style="left: {[15,45,70,85,25,55,10,80,35,60,90,5][i]}%; top: {[20,35,15,55,65,75,80,30,50,10,70,45][i]}%; animation-delay: {[0,1.2,0.6,2.4,1.8,3,0.3,2.1,3.6,4.2,1.5,4.8][i]}s;"></div>
+    {/each}
+  </div>
+
+  <!-- Asymmetric glow orbs -->
+  <div class="hero-glow hero-glow--primary"></div>
+  <div class="hero-glow hero-glow--accent"></div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-grid">
+      <!-- Left: Title -->
+      <div class="animate-fade-in">
+        <div class="hero-tagline">
+          <span>Decentralized Security Oracle</span>
+        </div>
+        <h1 class="hero-title">
+          Audit<br/><span class="title-accent">Onchain</span>
+        </h1>
+        <p class="hero-subtitle">
+          AI-powered security audits for every smart contract on BNB Chain.
+          Results stored onchain. Queryable by any dApp.
+        </p>
       </div>
 
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4 animate-fade-in-delay-1">
-        Is your contract <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent)] to-[var(--accent-light)]">safe</span>?
-      </h1>
-      <p class="text-[var(--text-secondary)] text-lg max-w-xl mx-auto mb-8 animate-fade-in-delay-2">
-        Paste any BSC contract address. Get an instant AI security audit.<br/>
-        Results stored onchain. Queryable by any dApp.
-      </p>
+      <!-- Right: Terminal scanner -->
+      <div class="scan-terminal animate-fade-in-delay-1">
+        <div class="scan-terminal-header">
+          <span>aegis://scan</span>
+          <span style="color: var(--c-success);">ready</span>
+        </div>
 
-      <!-- Search bar -->
-      <div class="max-w-2xl mx-auto animate-fade-in-delay-3">
-        <div class="flex gap-2 p-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl focus-within:border-[var(--accent)]/40 focus-within:shadow-[0_0_24px_rgba(99,102,241,0.1)] transition-all">
+        <div class="scan-prompt">
+          <label for="scan-address" class="prompt-symbol">$</label>
           <input
+            id="scan-address"
             bind:value={address}
             on:keydown={handleKeydown}
             type="text"
-            placeholder="0x... paste any BSC contract address"
-            class="flex-1 bg-transparent px-4 py-2.5 text-sm font-mono text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/40 focus:outline-none"
+            placeholder="0x... paste BSC contract address"
+            class="scan-input"
             disabled={scanning}
+            aria-describedby={scanError ? 'scan-error' : undefined}
           />
-          <button
-            on:click={handleScan}
-            disabled={scanning}
-            class="px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-sm rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_16px_rgba(99,102,241,0.3)] hover:shadow-[0_0_24px_rgba(99,102,241,0.5)]"
-          >
-            {scanning ? 'Scanning...' : 'Scan'}
-          </button>
         </div>
 
+        <button
+          on:click={handleScan}
+          disabled={scanning}
+          class="scan-btn"
+        >
+          {#if scanning}
+            <span class="scan-spinner"></span>
+            Scanning...
+          {:else}
+            Execute Scan
+          {/if}
+        </button>
+
         {#if scanError}
-          <p class="text-red-400 text-sm mt-3 text-left">{scanError}</p>
+          <div id="scan-error" class="scan-error" role="alert">{scanError}</div>
         {/if}
         {#if scanning && scanMessage}
-          <div class="flex items-center justify-center gap-2 mt-4 text-sm text-[var(--accent-light)]">
-            <div class="w-3 h-3 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+          <div class="scan-status">
+            <span class="scan-status-dot"></span>
             {scanMessage}
           </div>
         {/if}
       </div>
     </div>
+  </div>
+</section>
+
+<!-- Stats bar -->
+{#if stats.total > 0}
+  <section class="section" style="padding-top: var(--sp-12); padding-bottom: var(--sp-8);">
+    <div class="section-inner">
+      <div class="stats-grid animate-fade-in-delay-2">
+        <div class="stat-card">
+          <div class="stat-value">{stats.total}</div>
+          <div class="stat-label">Contracts Scanned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value {scoreColor(stats.avgScore)}">{stats.avgScore}</div>
+          <div class="stat-label">Avg Risk Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--sev-high);">{stats.threats}</div>
+          <div class="stat-label">High Risk Detected</div>
+        </div>
+      </div>
+    </div>
   </section>
+{/if}
 
-  <!-- Stats bar -->
-  {#if stats.total > 0}
-    <section class="grid grid-cols-3 gap-4 mb-12 animate-fade-in-delay-3">
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
-        <div class="text-2xl font-bold">{stats.total}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Contracts Scanned</div>
-      </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
-        <div class="text-2xl font-bold {scoreColor(stats.avgScore)}">{stats.avgScore}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">Average Risk Score</div>
-      </div>
-      <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 text-center group hover:border-[var(--accent)]/20 transition-colors">
-        <div class="text-2xl font-bold text-red-400">{stats.threats}</div>
-        <div class="text-xs text-[var(--text-secondary)] mt-1">High Risk Detected</div>
-      </div>
-    </section>
-  {/if}
-
-  <!-- Recent scans -->
-  {#if recentReports.length > 0}
-    <section class="pb-20">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold m-0">Recent Scans</h2>
-        <a href="#/explore" class="text-sm text-[var(--accent-light)] hover:underline no-underline">View all</a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+<!-- Recent scans -->
+{#if recentReports.length > 0}
+  <section class="section" style="padding-top: 0; padding-bottom: var(--sp-20);">
+    <div class="section-inner">
+      <div class="section-label">Recent Scans</div>
+      <div class="contracts-grid animate-fade-in-delay-3">
         {#each recentReports.slice(0, 6) as report}
           <ContractCard {report} />
         {/each}
       </div>
-    </section>
-  {/if}
-</div>
+      <div class="text-center mt-[var(--sp-6)]">
+        <a href="#/explore" class="view-all-link">View all scanned contracts</a>
+      </div>
+    </div>
+  </section>
+{/if}
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 24px 64px;
+    overflow: hidden;
+    background: var(--c-secondary);
+  }
+
+  .scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--c-primary) 20%, var(--c-primary) 80%, transparent 100%);
+    opacity: 0.6;
+    animation: scan-line 4s var(--ease-out) infinite;
+    z-index: 1;
+    box-shadow: 0 0 20px var(--c-primary-glow), 0 0 60px var(--c-primary-dim);
+  }
+
+  .grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--c-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse 70% 60% at 30% 70%, black 0%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 30% 70%, black 0%, transparent 100%);
+  }
+
+  .hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--c-primary);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particle-float 6s var(--ease-out) infinite;
+  }
+
+  @keyframes particle-float {
+    0% { opacity: 0; transform: translateY(0) scale(1); }
+    20% { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-120px) scale(0); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 1;
+  }
+
+  .hero-glow--primary {
+    width: 500px;
+    height: 500px;
+    background: var(--c-primary);
+    bottom: -10%;
+    left: -5%;
+    opacity: 0.12;
+  }
+
+  .hero-glow--accent {
+    width: 300px;
+    height: 300px;
+    background: var(--c-accent);
+    top: 10%;
+    right: -10%;
+    opacity: 0.08;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 1320px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  @media (min-width: 768px) {
+    .hero-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: end;
+      gap: 32px;
+    }
+  }
+
+  .hero-tagline {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tagline::before {
+    content: '>';
+    color: var(--c-accent);
+  }
+
+  .hero-title {
+    font-family: var(--f-display);
+    font-size: clamp(2.75rem, 6vw, 5.5rem);
+    font-weight: 700;
+    color: var(--c-text-bright);
+    line-height: 1.05;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+
+  .title-accent {
+    color: var(--c-primary);
+    text-shadow: 0 0 30px var(--c-primary-glow);
+    animation: text-glow 3s ease-out infinite alternate;
+  }
+
+  @keyframes text-glow {
+    0% { text-shadow: 0 0 20px var(--c-primary-glow); }
+    100% { text-shadow: 0 0 40px var(--c-primary-glow), 0 0 80px rgba(0, 240, 255, 0.1); }
+  }
+
+  .hero-subtitle {
+    font-family: var(--f-body);
+    font-size: 1.5rem;
+    color: var(--c-muted);
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  /* Terminal scanner */
+  .scan-terminal {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    position: relative;
+  }
+
+  .scan-terminal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-primary), transparent);
+    opacity: 0.5;
+  }
+
+  .scan-terminal-header {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .scan-prompt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .prompt-symbol {
+    font-family: var(--f-mono);
+    font-size: 0.8125rem;
+    color: var(--c-primary);
+    flex-shrink: 0;
+  }
+
+  .scan-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    font-family: var(--f-mono);
+    font-size: 1rem;
+    color: var(--c-text);
+    outline: none;
+    caret-color: var(--c-primary);
+  }
+
+  .scan-input::placeholder {
+    color: var(--c-muted);
+    opacity: 0.5;
+  }
+
+  .scan-input:disabled {
+    opacity: 0.5;
+  }
+
+  .scan-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--c-primary-dim);
+    border: 1px solid var(--c-border-active);
+    border-radius: var(--radius-sm);
+    font-family: var(--f-display);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--c-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  @media (hover: hover) {
+    .scan-btn:hover:not(:disabled) {
+      background: rgba(0, 240, 255, 0.25);
+      box-shadow: var(--shadow-glow-primary);
+    }
+  }
+
+  .scan-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .scan-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--c-primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .scan-error {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-error);
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(255, 51, 68, 0.08);
+    border: 1px solid rgba(255, 51, 68, 0.2);
+    border-radius: var(--radius-sm);
+  }
+
+  .scan-status {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-primary);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scan-status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--c-primary);
+    border-radius: 50%;
+    animation: pulse-glow 2s ease-out infinite;
+  }
+
+  /* Section utilities */
+  .section {
+    position: relative;
+    padding: 96px 24px;
+    overflow: hidden;
+  }
+
+  .section-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 1px;
+    background: var(--c-primary);
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .stat-card:hover {
+      border-color: var(--c-border-active);
+    }
+  }
+
+  .stat-value {
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--c-text-bright);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  /* Contracts grid */
+  .contracts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .contracts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contracts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .view-all-link {
+    font-family: var(--f-mono);
+    font-size: 0.6875rem;
+    color: var(--c-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .view-all-link:hover {
+      opacity: 0.7;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
