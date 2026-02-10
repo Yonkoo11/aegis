@@ -77,21 +77,21 @@
   {:else}
     <!-- Overview grid -->
     <div class="overview-grid animate-fade-in-delay-1">
-      <div class="overview-card">
+      <div class="overview-card" style="--ov-accent: var(--c-primary);">
         <div class="ov-label">Contracts Scanned</div>
         <div class="ov-value">{totalScanned}</div>
       </div>
-      <div class="overview-card">
+      <div class="overview-card" style="--ov-accent: {scoreBgColor(avgScore)};">
         <div class="ov-label">Average Risk Score</div>
-        <div class="ov-value" style="color: {scoreBgColor(avgScore)}; text-shadow: 0 0 20px {scoreBgColor(avgScore)}33">{avgScore}</div>
+        <div class="ov-value ov-value--tinted" style="color: {scoreBgColor(avgScore)};">{avgScore}</div>
       </div>
-      <div class="overview-card">
+      <div class="overview-card" style="--ov-accent: var(--c-success);">
         <div class="ov-label">Source Verified</div>
-        <div class="ov-value" style="color: var(--c-success); text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);">{verifiedPct}%</div>
+        <div class="ov-value ov-value--tinted" style="color: var(--c-success);">{verifiedPct}%</div>
       </div>
-      <div class="overview-card">
+      <div class="overview-card" style="--ov-accent: var(--sev-high);">
         <div class="ov-label">High Risk Contracts</div>
-        <div class="ov-value" style="color: var(--sev-high); text-shadow: 0 0 20px rgba(255, 51, 68, 0.2);">{distribution.critical + distribution.high}</div>
+        <div class="ov-value ov-value--tinted" style="color: var(--sev-high);">{distribution.critical + distribution.high}</div>
       </div>
     </div>
 
@@ -207,16 +207,9 @@
   .overview-card {
     background: var(--c-surface);
     border: 1px solid var(--c-border);
+    border-top: 2px solid var(--ov-accent, var(--c-border));
     border-radius: var(--radius-md);
-    padding: 24px;
-    text-align: center;
-    transition: border-color var(--dur-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) {
-    .overview-card:hover {
-      border-color: var(--c-border-active);
-    }
+    padding: 20px 24px;
   }
 
   .ov-label {

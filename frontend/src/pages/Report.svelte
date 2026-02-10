@@ -130,26 +130,44 @@
 
     <!-- Severity breakdown -->
     <div class="severity-section animate-fade-in-delay-1">
-      <div class="severity-total">
-        <span class="severity-total-value">{report.totalFindings}</span>
-        <span class="severity-total-label">Total Findings</span>
+      <div class="section-label">
+        Severity Breakdown
+        <span class="label-meta">{report.totalFindings} findings</span>
       </div>
-      <div class="severity-grid">
-        <div class="sev-card" style="border-top-color: var(--sev-critical);">
-          <div class="sev-value" style="color: var(--sev-critical); text-shadow: 0 0 12px rgba(255, 0, 102, 0.3);">{report.criticalCount}</div>
-          <div class="sev-name">Critical</div>
+      <div class="severity-bar">
+        {#if report.criticalCount > 0}
+          <div class="sev-seg sev-seg--critical" style="flex: {report.criticalCount};"></div>
+        {/if}
+        {#if report.highCount > 0}
+          <div class="sev-seg sev-seg--high" style="flex: {report.highCount};"></div>
+        {/if}
+        {#if report.mediumCount > 0}
+          <div class="sev-seg sev-seg--medium" style="flex: {report.mediumCount};"></div>
+        {/if}
+        {#if report.lowCount > 0}
+          <div class="sev-seg sev-seg--low" style="flex: {report.lowCount};"></div>
+        {/if}
+      </div>
+      <div class="severity-legend">
+        <div class="sev-legend-item">
+          <span class="sev-dot sev-dot--critical"></span>
+          <span class="sev-legend-count sev-count--critical">{report.criticalCount}</span>
+          <span class="sev-legend-name">Critical</span>
         </div>
-        <div class="sev-card" style="border-top-color: var(--sev-high);">
-          <div class="sev-value" style="color: var(--sev-high); text-shadow: 0 0 12px rgba(255, 51, 68, 0.3);">{report.highCount}</div>
-          <div class="sev-name">High</div>
+        <div class="sev-legend-item">
+          <span class="sev-dot sev-dot--high"></span>
+          <span class="sev-legend-count sev-count--high">{report.highCount}</span>
+          <span class="sev-legend-name">High</span>
         </div>
-        <div class="sev-card" style="border-top-color: var(--sev-medium);">
-          <div class="sev-value" style="color: var(--sev-medium); text-shadow: 0 0 12px rgba(255, 184, 0, 0.3);">{report.mediumCount}</div>
-          <div class="sev-name">Medium</div>
+        <div class="sev-legend-item">
+          <span class="sev-dot sev-dot--medium"></span>
+          <span class="sev-legend-count sev-count--medium">{report.mediumCount}</span>
+          <span class="sev-legend-name">Medium</span>
         </div>
-        <div class="sev-card" style="border-top-color: var(--sev-low);">
-          <div class="sev-value" style="color: var(--sev-low); text-shadow: 0 0 12px rgba(0, 240, 255, 0.3);">{report.lowCount}</div>
-          <div class="sev-name">Low</div>
+        <div class="sev-legend-item">
+          <span class="sev-dot sev-dot--low"></span>
+          <span class="sev-legend-count sev-count--low">{report.lowCount}</span>
+          <span class="sev-legend-name">Low</span>
         </div>
       </div>
     </div>
@@ -405,81 +423,69 @@ bool safe = score {'<='} 20; // Low risk threshold</code></pre>
 
   /* Severity section */
   .severity-section {
-    display: flex;
-    align-items: center;
-    gap: 20px;
     margin-bottom: 32px;
   }
 
-  .severity-total {
+  .severity-bar {
     display: flex;
-    flex-direction: column;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+
+  .sev-seg {
+    min-width: 4px;
+    border-radius: 2px;
+  }
+
+  .sev-seg--critical { background: var(--sev-critical); box-shadow: 0 0 8px var(--c-accent-glow); }
+  .sev-seg--high { background: var(--sev-high); }
+  .sev-seg--medium { background: var(--sev-medium); }
+  .sev-seg--low { background: var(--sev-low); }
+
+  .severity-legend {
+    display: flex;
+    gap: 24px;
+  }
+
+  .sev-legend-item {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    min-width: 100px;
-    padding: 16px;
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    border-radius: var(--radius-sm);
+    gap: 8px;
+  }
+
+  .sev-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     flex-shrink: 0;
   }
 
-  .severity-total-value {
+  .sev-dot--critical { background: var(--sev-critical); box-shadow: 0 0 6px var(--c-accent-glow); }
+  .sev-dot--high { background: var(--sev-high); }
+  .sev-dot--medium { background: var(--sev-medium); }
+  .sev-dot--low { background: var(--sev-low); }
+
+  .sev-legend-count {
     font-family: var(--f-display);
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--c-text-bright);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .severity-total-label {
-    font-family: var(--f-mono);
-    font-size: 0.55rem;
-    color: var(--c-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 6px;
-  }
-
-  .severity-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    flex: 1;
-  }
-
-  .sev-card {
-    background: var(--c-surface);
-    border: 1px solid var(--c-border);
-    border-top: 2px solid var(--c-border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    text-align: center;
-    transition: border-color var(--dur-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) {
-    .sev-card:hover {
-      border-color: var(--c-border-active);
-    }
-  }
-
-  .sev-value {
-    font-family: var(--f-display);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--c-text-bright);
     font-variant-numeric: tabular-nums;
   }
 
-  .sev-name {
+  .sev-count--critical { color: var(--sev-critical); }
+  .sev-count--high { color: var(--sev-high); }
+  .sev-count--medium { color: var(--sev-medium); }
+  .sev-count--low { color: var(--sev-low); }
+
+  .sev-legend-name {
     font-family: var(--f-mono);
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     color: var(--c-muted);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 4px;
+    letter-spacing: 0.05em;
   }
 
   /* Findings */
@@ -570,19 +576,9 @@ bool safe = score {'<='} 20; // Low risk threshold</code></pre>
       max-width: 100%;
     }
 
-    .severity-section {
-      flex-direction: column;
-    }
-
-    .severity-total {
-      width: 100%;
-      flex-direction: row;
-      gap: 12px;
-    }
-
-    .severity-grid {
-      grid-template-columns: repeat(2, 1fr);
-      width: 100%;
+    .severity-legend {
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
     .proof-grid {
@@ -591,8 +587,8 @@ bool safe = score {'<='} 20; // Low risk threshold</code></pre>
   }
 
   @media (max-width: 480px) {
-    .severity-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .severity-legend {
+      gap: 12px;
     }
   }
 </style>
