@@ -8,6 +8,7 @@
 <a
   href="#/report/{report.address}"
   class="card"
+  style="--card-glow: {scoreBgColor(report.riskScore)};"
 >
   <!-- Top accent line -->
   <div class="card-accent" style="background: linear-gradient(90deg, transparent, {scoreBgColor(report.riskScore)}, transparent);"></div>
@@ -69,18 +70,24 @@
   @media (hover: hover) {
     .card:hover {
       border-color: var(--c-border-active);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-card);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 30px color-mix(in srgb, var(--card-glow) 15%, transparent);
     }
 
     .card:hover .card-name {
       color: var(--c-primary);
+    }
+
+    .card:hover .card-accent {
+      opacity: 1;
+      height: 2px;
     }
   }
 
   .card-accent {
     height: 1px;
     opacity: 0.5;
+    transition: opacity var(--dur-fast) var(--ease-out), height var(--dur-fast) var(--ease-out);
   }
 
   .card-inner {

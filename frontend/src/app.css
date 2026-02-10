@@ -84,6 +84,10 @@ html {
   scroll-behavior: smooth;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -96,6 +100,11 @@ html, body {
   font-size: 16px;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(0, 240, 255, 0.25);
+  color: var(--c-text-bright);
 }
 
 #app {

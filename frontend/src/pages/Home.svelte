@@ -250,6 +250,7 @@
   </div>
 </section>
 
+<div class="section-divider"></div>
 <!-- ==================== SECTION 3: WHY AEGIS ==================== -->
 <section class="section section--alt reveal">
   <div class="section-inner">
@@ -287,6 +288,7 @@
   </div>
 </section>
 
+<div class="section-divider"></div>
 <!-- ==================== SECTION 4: INTEGRATION CODE ==================== -->
 <section class="section reveal">
   <div class="section-inner">
@@ -331,6 +333,7 @@
   </div>
 </section>
 
+<div class="section-divider"></div>
 <!-- ==================== SECTION 5: RECENT SCANS ==================== -->
 {#if recentReports.length > 0}
   <section class="section section--alt reveal">
@@ -338,8 +341,10 @@
       <div class="section-label">Live Data</div>
       <h2 class="section-title">{stats.total} contracts scanned and counting</h2>
       <div class="contracts-grid">
-        {#each recentReports.slice(0, 6) as report}
-          <ContractCard {report} />
+        {#each recentReports.slice(0, 6) as report, i}
+          <div class="reveal-child" style="transition-delay: {i * 80}ms;">
+            <ContractCard {report} />
+          </div>
         {/each}
       </div>
       <div class="section-cta-row">
@@ -349,11 +354,14 @@
   </section>
 {/if}
 
+<div class="section-divider"></div>
 <!-- ==================== SECTION 6: CTA BANNER ==================== -->
 <section class="section reveal">
   <div class="section-inner">
     <div class="cta-banner">
-      <div class="cta-glow"></div>
+      <div class="cta-grid-bg"></div>
+      <div class="cta-glow cta-glow--primary"></div>
+      <div class="cta-glow cta-glow--accent"></div>
       <div class="cta-content">
         <h2 class="cta-title">Secure your protocol</h2>
         <p class="cta-desc">Paste any BSC contract address. Get an instant AI security audit. Free, permissionless, onchain.</p>
@@ -492,6 +500,16 @@
   .hero-stat-label { font-family: var(--f-mono); font-size: 0.6rem; color: var(--c-muted); text-transform: uppercase; letter-spacing: 0.08em; }
   .hero-stat-divider { width: 1px; height: 24px; background: var(--c-border); }
 
+  /* ===== SECTION DIVIDERS ===== */
+  .section-divider {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-primary), transparent);
+    opacity: 0.15;
+  }
+
   /* ===== SECTION UTILITIES ===== */
   .section { position: relative; padding: 80px 24px; overflow: hidden; }
   .section--alt { /* transparent to let body gradient show */ }
@@ -567,19 +585,61 @@
   @media (hover: hover) { .view-all-link:hover { opacity: 0.7; } }
 
   /* ===== CTA BANNER ===== */
-  .cta-banner { position: relative; background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-md); padding: 56px 40px; text-align: center; overflow: hidden; }
-  .cta-glow { position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 600px; height: 300px; background: var(--c-primary); filter: blur(150px); opacity: 0.06; pointer-events: none; }
-  .cta-content { position: relative; z-index: 1; }
-  .cta-title { font-family: var(--f-display); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--c-text-bright); margin: 0 0 12px; }
-  .cta-desc { font-family: var(--f-body); font-size: 1rem; color: var(--c-muted); margin: 0 0 28px; }
-  .cta-btn {
-    display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px;
-    background: var(--c-primary-dim); border: 1px solid var(--c-primary);
-    border-radius: var(--radius-sm); font-family: var(--f-display); font-size: 0.8125rem;
-    font-weight: 600; color: var(--c-primary); text-transform: uppercase; letter-spacing: 0.1em;
-    cursor: pointer; transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  .cta-banner {
+    position: relative; background: var(--c-surface); border-radius: var(--radius-md);
+    padding: 64px 40px; text-align: center; overflow: hidden;
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    animation: cta-border-pulse 4s ease-in-out infinite;
   }
-  @media (hover: hover) { .cta-btn:hover { background: rgba(0, 240, 255, 0.2); box-shadow: 0 0 30px var(--c-primary-glow); } }
+  @keyframes cta-border-pulse {
+    0%, 100% { border-color: rgba(0, 240, 255, 0.1); }
+    50% { border-color: rgba(0, 240, 255, 0.25); }
+  }
+  .cta-grid-bg {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+  .cta-glow {
+    position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none;
+  }
+  .cta-glow--primary {
+    width: 500px; height: 300px; background: var(--c-primary);
+    top: -40%; left: 20%; opacity: 0.08;
+    animation: cta-drift-1 8s ease-in-out infinite;
+  }
+  .cta-glow--accent {
+    width: 400px; height: 250px; background: var(--c-accent);
+    bottom: -30%; right: 10%; opacity: 0.05;
+    animation: cta-drift-2 10s ease-in-out infinite;
+  }
+  @keyframes cta-drift-1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 15px); }
+  }
+  @keyframes cta-drift-2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-20px, -10px); }
+  }
+  .cta-content { position: relative; z-index: 1; }
+  .cta-title { font-family: var(--f-display); font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; color: var(--c-text-bright); margin: 0 0 12px; }
+  .cta-desc { font-family: var(--f-body); font-size: 1rem; color: var(--c-muted); margin: 0 0 32px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px;
+    background: var(--c-primary-dim); border: 1px solid var(--c-primary);
+    border-radius: var(--radius-sm); font-family: var(--f-display); font-size: 0.875rem;
+    font-weight: 600; color: var(--c-primary); text-transform: uppercase; letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .cta-btn:hover {
+      background: rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 40px var(--c-primary-glow), 0 0 80px rgba(0, 240, 255, 0.1);
+      transform: translateY(-1px);
+    }
+  }
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {

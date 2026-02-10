@@ -121,8 +121,10 @@
     </div>
   {:else}
     <div class="contracts-grid animate-fade-in-delay-2">
-      {#each filtered as report}
-        <ContractCard {report} />
+      {#each filtered as report, i}
+        <div class="card-stagger" style="animation-delay: {Math.min(i * 50, 500)}ms;">
+          <ContractCard {report} />
+        </div>
       {/each}
     </div>
     <div class="results-count">
@@ -293,6 +295,16 @@
     .risk-btn:hover {
       border-color: var(--c-border-active);
     }
+  }
+
+  /* Card stagger entrance */
+  .card-stagger {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: card-enter 0.4s var(--ease-out) forwards;
+  }
+  @keyframes card-enter {
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* Grid */

@@ -21,7 +21,7 @@
 
 <button
   class="finding-card"
-  style="border-left-color: {config.color};"
+  style="border-left-color: {config.color}; --glow-color: {config.glow};"
   on:click={() => expanded = !expanded}
 >
   <div class="finding-header">
@@ -62,11 +62,17 @@
     padding: 12px 16px;
     cursor: pointer;
     transition: background var(--dur-fast) var(--ease-out),
-                border-color var(--dur-fast) var(--ease-out);
+                border-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
   }
 
-  .finding-card:hover {
-    background: var(--c-surface-raised);
+  @media (hover: hover) {
+    .finding-card:hover {
+      background: var(--c-surface-raised);
+      transform: translateX(2px);
+      box-shadow: -3px 0 12px var(--glow-color, rgba(0, 240, 255, 0.08));
+    }
   }
 
   .finding-header {
@@ -132,7 +138,13 @@
   .finding-detail {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid var(--c-border);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    animation: detail-fade 0.25s ease-out;
+  }
+
+  @keyframes detail-fade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .finding-desc {
