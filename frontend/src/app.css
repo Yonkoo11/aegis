@@ -80,14 +80,6 @@
   }
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
 html, body {
   margin: 0;
   padding: 0;
@@ -225,11 +217,6 @@ h1, h2, h3, h4, h5, h6, .font-display {
   background: var(--c-primary);
 }
 
-/* Selection */
-::selection {
-  background: var(--c-primary);
-  color: var(--c-secondary);
-}
 
 /* Focus */
 *:focus-visible {

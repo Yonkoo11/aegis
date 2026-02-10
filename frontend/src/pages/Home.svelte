@@ -115,8 +115,8 @@
   }
 
   function scrollToHero() {
+    window.scrollTo({ top: 0 });
     document.getElementById('scan-address')?.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
 
@@ -198,53 +198,31 @@
   </div>
 </section>
 
-<!-- ==================== SECTION 2: HOW IT WORKS ==================== -->
+<!-- ==================== SECTION 2: THE PIPELINE ==================== -->
 <section class="section reveal">
   <div class="section-inner">
-    <div class="section-label">How It Works</div>
-    <h2 class="section-title">Three steps to a security score</h2>
-    <div class="steps-grid">
-      <div class="step-card reveal-child" style="transition-delay: 0ms;">
-        <div class="step-number">01</div>
-        <div class="step-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
+    <div class="section-label">The Pipeline</div>
+    <div class="pipeline-layout">
+      <div class="pipeline-text-col">
+        <h2 class="section-title">Paste an address.<br/>Get a security score.</h2>
+        <p class="pipeline-subtitle">Source code is fetched from BSCScan, run through 40+ static detectors, then analyzed by Claude AI for logic bugs and economic attack vectors. The risk score lands onchain. The full report lands on IPFS.</p>
+      </div>
+      <div class="pipeline-terminal reveal-child">
+        <div class="pipeline-terminal-bar">
+          <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+          <span class="terminal-title">aegis-cli</span>
         </div>
-        <h3 class="step-name">Paste Address</h3>
-        <p class="step-desc">Drop any BSC contract address into the scanner. Verified source code is fetched automatically from BSCScan.</p>
-      </div>
-
-      <div class="step-connector">
-        <div class="connector-line"></div>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-
-      <div class="step-card reveal-child" style="transition-delay: 150ms;">
-        <div class="step-number">02</div>
-        <div class="step-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/><path d="M8.56 9.8A3.99 3.99 0 0 1 8 8a4 4 0 0 1 .67-2.22"/><circle cx="12" cy="16" r="4"/><path d="M12 12v1"/><path d="M15.5 17.5 17 19"/><path d="M8.5 17.5 7 19"/>
-          </svg>
+        <div class="pipeline-terminal-body">
+          <div class="pipeline-line"><span class="pl-prompt">$</span> aegis scan 0x10ED...024E</div>
+          <div class="pipeline-line pl-dim">&nbsp;</div>
+          <div class="pipeline-line"><span class="pl-label">fetch</span> <span class="pl-muted">Verified source from BSCScan</span> <span class="pl-ok">done</span></div>
+          <div class="pipeline-line"><span class="pl-label">slither</span> <span class="pl-muted">42 detectors passed</span> <span class="pl-ok">done</span></div>
+          <div class="pipeline-line"><span class="pl-label">claude</span> <span class="pl-muted">Deep contextual analysis</span> <span class="pl-ok">done</span></div>
+          <div class="pipeline-line pl-dim">&nbsp;</div>
+          <div class="pipeline-line"><span class="pl-result">Score: 43</span> <span class="pl-risk-medium">MEDIUM RISK</span></div>
+          <div class="pipeline-line"><span class="pl-muted">→ tx:</span> SecurityOracle.submitScore()</div>
+          <div class="pipeline-line"><span class="pl-muted">→ ipfs:</span> <span class="pl-hash">QmX8k...f3a2</span></div>
         </div>
-        <h3 class="step-name">AI Analyzes</h3>
-        <p class="step-desc">40+ static patterns scan for known vulnerabilities. Then Claude AI performs deep contextual analysis on the source code.</p>
-      </div>
-
-      <div class="step-connector">
-        <div class="connector-line"></div>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-
-      <div class="step-card reveal-child" style="transition-delay: 300ms;">
-        <div class="step-number">03</div>
-        <div class="step-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-        </div>
-        <h3 class="step-name">Results Onchain</h3>
-        <p class="step-desc">Risk score and findings hash are written to the SecurityOracle contract. Full report pinned to IPFS. Permanent and queryable.</p>
       </div>
     </div>
   </div>
@@ -254,35 +232,29 @@
 <!-- ==================== SECTION 3: WHY AEGIS ==================== -->
 <section class="section section--alt reveal">
   <div class="section-inner">
-    <div class="section-label">Why Aegis</div>
+    <div class="section-label">Architecture</div>
     <h2 class="section-title">Not just a tool. Infrastructure.</h2>
-    <div class="features-grid">
-      <div class="feature-card reveal-child" style="border-top-color: var(--c-primary); transition-delay: 0ms;">
-        <div class="feature-icon" style="color: var(--c-primary);">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/><path d="M8.56 9.8A3.99 3.99 0 0 1 8 8a4 4 0 0 1 .67-2.22"/><circle cx="12" cy="16" r="4"/><path d="M12 12v1"/>
-          </svg>
+    <div class="bento-grid">
+      <div class="bento-card bento-card--hero reveal-child">
+        <div class="bento-eyebrow">Core Engine</div>
+        <h3 class="bento-title">AI reads your code<br/>like an auditor would</h3>
+        <p class="bento-desc">Static analysis catches known patterns. Claude AI catches everything else: logic bugs, access control gaps, economic exploits, rugpull setups. It reads the actual source, not just signatures.</p>
+        <div class="bento-code-hint">
+          <span class="bch-line"><span class="bch-dim">// what static tools find:</span></span>
+          <span class="bch-line">reentrancy, unchecked-return, tx-origin</span>
+          <span class="bch-line"><span class="bch-dim">// what AI finds:</span></span>
+          <span class="bch-line"><span class="bch-accent">price manipulation via flash loan path</span></span>
         </div>
-        <h3 class="feature-name">AI-Powered Analysis</h3>
-        <p class="feature-desc">Goes beyond pattern matching. Claude AI reads the source code and identifies logic bugs, access control flaws, and economic attack vectors that static tools miss.</p>
       </div>
-      <div class="feature-card reveal-child" style="border-top-color: var(--c-success); transition-delay: 100ms;">
-        <div class="feature-icon" style="color: var(--c-success);">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-          </svg>
-        </div>
-        <h3 class="feature-name">Onchain Oracle</h3>
-        <p class="feature-desc">Any dApp on BNB Chain can call <code>getScore()</code> before interacting with an unknown contract. Security as a composable primitive.</p>
+      <div class="bento-card bento-card--sm reveal-child" style="transition-delay: 100ms;">
+        <div class="bento-eyebrow bento-eyebrow--success">Composable</div>
+        <h3 class="bento-title">Onchain Oracle</h3>
+        <p class="bento-desc">Any dApp calls <code>getScore(address)</code> before interacting with unknown contracts. View function, no gas. Security as a primitive.</p>
       </div>
-      <div class="feature-card reveal-child" style="border-top-color: var(--c-accent); transition-delay: 200ms;">
-        <div class="feature-icon" style="color: var(--c-accent);">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-          </svg>
-        </div>
-        <h3 class="feature-name">IPFS Persistence</h3>
-        <p class="feature-desc">Full audit reports are pinned to IPFS via Pinata. Immutable, permanent, and censorship-resistant. The score lives onchain; the details live on IPFS.</p>
+      <div class="bento-card bento-card--sm reveal-child" style="transition-delay: 200ms;">
+        <div class="bento-eyebrow bento-eyebrow--accent">Permanent</div>
+        <h3 class="bento-title">IPFS Storage</h3>
+        <p class="bento-desc">Score lives onchain. Full report lives on IPFS via Pinata. Immutable, censorship-resistant, and always available.</p>
       </div>
     </div>
   </div>
@@ -297,20 +269,7 @@
       <div class="code-text">
         <h2 class="section-title">Integrate in 3 lines</h2>
         <p class="code-subtitle">Your smart contract can query Aegis before interacting with unknown contracts. Add a security gate in seconds.</p>
-        <div class="code-meta">
-          <span class="code-meta-item">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            View function (no gas cost)
-          </span>
-          <span class="code-meta-item">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Works from any BSC contract
-          </span>
-          <span class="code-meta-item">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Verified on BSCScan
-          </span>
-        </div>
+        <p class="code-note">View function. No gas. Works from any BSC contract.</p>
       </div>
       <div class="code-block-wrap reveal-child">
         <div class="code-block-header">
@@ -537,33 +496,59 @@
   .section-label::before { content: ''; display: block; width: 12px; height: 1px; background: var(--c-primary); }
   .section-title { font-family: var(--f-display); font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; color: var(--c-text-bright); margin: 0 0 40px; letter-spacing: -0.02em; }
 
-  /* ===== HOW IT WORKS ===== */
-  .steps-grid { display: flex; align-items: flex-start; gap: 0; }
-  .step-card { flex: 1; padding: 24px; }
-  .step-number { font-family: var(--f-mono); font-size: 0.6rem; color: var(--c-primary); letter-spacing: 0.1em; margin-bottom: 16px; opacity: 0.6; }
-  .step-icon { margin-bottom: 16px; opacity: 0.8; }
-  .step-name { font-family: var(--f-display); font-size: 1.125rem; font-weight: 600; color: var(--c-text-bright); margin-bottom: 8px; }
-  .step-desc { font-family: var(--f-body); font-size: 0.875rem; color: var(--c-muted); line-height: 1.6; margin: 0; }
-  .step-connector { display: flex; align-items: center; gap: 0; padding-top: 56px; color: var(--c-muted); }
-  .connector-line { width: 24px; height: 1px; background: var(--c-border); }
-
-  /* ===== FEATURES ===== */
-  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .feature-card {
-    background: var(--c-surface); border: 1px solid var(--c-border); border-top: 2px solid var(--c-border);
-    border-radius: var(--radius-md); padding: 28px; transition: border-color var(--dur-fast) var(--ease-out);
+  /* ===== PIPELINE ===== */
+  .pipeline-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .pipeline-subtitle { font-family: var(--f-body); font-size: 1.125rem; color: var(--c-muted); line-height: 1.6; margin: 0; max-width: 440px; }
+  .pipeline-terminal { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-md); overflow: hidden; }
+  .pipeline-terminal-bar {
+    display: flex; align-items: center; gap: 6px; padding: 10px 16px;
+    border-bottom: 1px solid var(--c-border); background: rgba(255, 255, 255, 0.02);
   }
-  @media (hover: hover) { .feature-card:hover { border-color: var(--c-border-active); } }
-  .feature-icon { margin-bottom: 16px; }
-  .feature-name { font-family: var(--f-display); font-size: 1.0625rem; font-weight: 600; color: var(--c-text-bright); margin-bottom: 8px; }
-  .feature-desc { font-family: var(--f-body); font-size: 0.8125rem; color: var(--c-muted); line-height: 1.65; margin: 0; }
-  .feature-desc code { font-family: var(--f-mono); font-size: 0.75rem; color: var(--c-primary); background: var(--c-primary-dim); padding: 1px 5px; border-radius: 3px; }
+  .terminal-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-border); }
+  .terminal-dot:first-child { background: var(--c-accent); opacity: 0.6; }
+  .terminal-dot:nth-child(2) { background: var(--sev-medium); opacity: 0.6; }
+  .terminal-dot:nth-child(3) { background: var(--c-success); opacity: 0.6; }
+  .terminal-title { font-family: var(--f-mono); font-size: 0.6rem; color: var(--c-muted); margin-left: auto; }
+  .pipeline-terminal-body { padding: 20px; font-family: var(--f-mono); font-size: 0.75rem; line-height: 2; }
+  .pipeline-line { white-space: nowrap; }
+  .pl-prompt { color: var(--c-primary); margin-right: 8px; }
+  .pl-label { color: var(--c-primary); display: inline-block; min-width: 64px; }
+  .pl-muted { color: var(--c-muted); }
+  .pl-ok { color: var(--c-success); float: right; }
+  .pl-dim { opacity: 0.3; }
+  .pl-result { color: var(--c-text-bright); font-weight: 600; }
+  .pl-risk-medium { color: var(--sev-medium); margin-left: 8px; }
+  .pl-hash { color: var(--c-primary); opacity: 0.7; }
+
+  /* ===== BENTO GRID ===== */
+  .bento-grid { display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: auto auto; gap: 16px; }
+  .bento-card {
+    background: var(--c-surface); border: 1px solid var(--c-border);
+    border-radius: var(--radius-md); padding: 32px;
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+  @media (hover: hover) { .bento-card:hover { border-color: var(--c-border-active); } }
+  .bento-card--hero { grid-row: 1 / 3; display: flex; flex-direction: column; }
+  .bento-card--sm { }
+  .bento-eyebrow { font-family: var(--f-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--c-primary); margin-bottom: 12px; }
+  .bento-eyebrow--success { color: var(--c-success); }
+  .bento-eyebrow--accent { color: var(--c-accent); }
+  .bento-title { font-family: var(--f-display); font-size: 1.25rem; font-weight: 600; color: var(--c-text-bright); margin-bottom: 12px; line-height: 1.3; }
+  .bento-card--hero .bento-title { font-size: 1.5rem; }
+  .bento-desc { font-family: var(--f-body); font-size: 0.8125rem; color: var(--c-muted); line-height: 1.65; margin: 0; }
+  .bento-desc code { font-family: var(--f-mono); font-size: 0.75rem; color: var(--c-primary); background: var(--c-primary-dim); padding: 1px 5px; border-radius: 3px; }
+  .bento-code-hint {
+    margin-top: auto; padding-top: 24px;
+    font-family: var(--f-mono); font-size: 0.6875rem; line-height: 1.8;
+  }
+  .bch-line { display: block; }
+  .bch-dim { color: var(--c-muted); opacity: 0.5; }
+  .bch-accent { color: var(--c-accent); }
 
   /* ===== CODE SECTION ===== */
   .code-section { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center; }
-  .code-subtitle { font-family: var(--f-body); font-size: 1rem; color: var(--c-muted); line-height: 1.6; margin: 0 0 24px; }
-  .code-meta { display: flex; flex-direction: column; gap: 8px; }
-  .code-meta-item { font-family: var(--f-mono); font-size: 0.6875rem; color: var(--c-muted); display: flex; align-items: center; gap: 8px; }
+  .code-subtitle { font-family: var(--f-body); font-size: 1rem; color: var(--c-muted); line-height: 1.6; margin: 0 0 16px; }
+  .code-note { font-family: var(--f-mono); font-size: 0.6875rem; color: var(--c-muted); opacity: 0.7; margin: 0; }
   .code-block-wrap { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-md); overflow: hidden; }
   .code-block-header { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--c-border); }
   .code-lang { font-family: var(--f-mono); font-size: 0.6rem; color: var(--c-primary); text-transform: uppercase; letter-spacing: 0.1em; }
@@ -643,9 +628,9 @@
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
-    .steps-grid { flex-direction: column; gap: 8px; }
-    .step-connector { display: none; }
-    .features-grid { grid-template-columns: 1fr; }
+    .pipeline-layout { grid-template-columns: 1fr; gap: 32px; }
+    .bento-grid { grid-template-columns: 1fr; }
+    .bento-card--hero { grid-row: auto; }
     .code-section { grid-template-columns: 1fr; }
     .cta-banner { padding: 40px 24px; }
   }
